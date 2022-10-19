@@ -1,0 +1,40 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="name" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 11px; flex-shrink: 0; top: 4px; justify-content: flex-start;">
+        <ui:Label text="名字" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
+        <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
+        <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="title" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 11px; flex-shrink: 0; top: 57px; justify-content: flex-start;">
+        <ui:Label text="称号" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
+        <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
+        <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="guild" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 10px; flex-shrink: 0; top: 103px; justify-content: flex-start;">
+        <ui:Label text="公会" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
+        <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
+        <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="icon" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 7px; flex-shrink: 0; top: 149px; justify-content: flex-start;">
+        <ui:Label text="图标" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
+        <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
+        <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="chat" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 7px; flex-shrink: 0; top: 196px; justify-content: flex-start;">
+        <ui:Label text="聊天框" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
+        <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
+        <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
+    </ui:VisualElement>
+    <ui:Button text="刷新" display-tooltip-when-elided="true" name="refresh" style="position: absolute; top: 321px; left: 8px;" />
+    <ui:Button text="弹气泡" display-tooltip-when-elided="true" name="talk" style="position: absolute; top: 322px; left: 99px;" />
+    <ui:VisualElement name="blood" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 7px; flex-shrink: 0; top: 243px; justify-content: flex-start;">
+        <ui:Label text="血条" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
+        <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
+        <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
+    </ui:VisualElement>
+</ui:UXML>
