@@ -44,6 +44,11 @@ namespace GameHUD
             if (!init) return;
             Object.BloodVisable(show, relationtype);
         }
+        public void HurtNumber(HudNumberType type, int number, Vector2 offset)
+        {
+            if (!init) return;
+            Object.PushNumber(number, type, offset);
+        }
 
         public void Release()
         {

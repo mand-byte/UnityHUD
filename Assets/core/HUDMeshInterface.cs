@@ -8,8 +8,6 @@ namespace GameHUD
     internal interface HUDMeshInterface
     {
         public void Release();
-        public void UpdatePos(Vector3 role);
-        public void UpdateOffset(Vector2 offset);
         public void RenderTo(CommandBuffer cmdBuffer);
     }
 }

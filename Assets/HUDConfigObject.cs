@@ -16,9 +16,31 @@ namespace GameHUD
         [Tooltip("上部切割点 y轴 从图片上边到上切割点的距离")]
         public int Top;
     }
-
     [System.Serializable]
-    public class HUDTXTInfoObject
+    public struct HUDNumberConfig
+    {
+        [Tooltip("数字类型")]
+        public HudNumberType Type;
+        [Tooltip("是否带正负符号")]
+        public bool Sign;
+        [Tooltip("数字前缀")]
+        public char Perfixe;
+
+        [Tooltip("移动时间")]
+        public float MoveTime;
+        [Tooltip("移动向量")]
+        public Vector2 MoveVect;
+        [Tooltip("变色时间")]
+        public float ColorTime;
+        [Tooltip("最终颜色")]
+        public Color32 Color;
+        [Tooltip("数字之间的间隔")]
+        public int NumbersGap;
+        [Tooltip("数字的对齐方式")]
+        public AlignmentEnum NumbersAlign;
+    }
+    [System.Serializable]
+    public struct HUDTXTInfoObject
     {
         [Tooltip("关系类型")]
         public HUDRelationEnum Relation;
@@ -43,7 +65,7 @@ namespace GameHUD
 
     }
     [System.Serializable]
-    public class HUDBloodInfoObject
+    public struct HUDBloodInfoObject
     {
         [Tooltip("关系类型")]
         public HUDRelationEnum Relation;
@@ -152,14 +174,16 @@ namespace GameHUD
 
         [Tooltip("血条关系配置")]
         public HUDBloodInfoObject[] BloodRelationArray;
-
-        [Tooltip("选择飘的数字种类 \n一定要跟前缀项对应\n 如你在'Element 1'选的是普通伤害, 那么你在下栏的'Element 1'填'r',表示所有普通伤害的数字0-9的散图命名的前缀是r开头的")]
-        public List<HudNumberType> NumberTypes;
-        [Tooltip("填写飘的数字种类的前缀 \n一定要跟'NumberTypes'栏对应")]
-        public List<char> NumberTypePerfixes;
-        [HideInInspector, System.NonSerialized]
-        public Dictionary<HudNumberType, char> NumberTypeDict;
         [Tooltip("气泡框配置")]
         public HUDTalkInfoObject[] TalkInfoArray;
+
+        [Tooltip("飘字配置")]
+        public List<HUDNumberConfig> NumberTypes;
+        [HideInInspector, System.NonSerialized]
+        public Dictionary<HudNumberType, HUDNumberConfig> NumberTypeDict=new Dictionary<HudNumberType, HUDNumberConfig>();
+
+
+
+
     }
 }

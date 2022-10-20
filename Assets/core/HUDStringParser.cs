@@ -85,22 +85,10 @@ namespace GameHUD
         {
             var config = HUDManager.Instance.Config;
             var info = HUDManager.Instance.GetSprite(str);
-            var vertex = ObjectPool<HUDVertex>.Pop();
+            var vertex = list[list.size - 1];
             mat = info.Mat;
             vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
             width = width == 0 ? info.Width : width;
-            if (alignmentEnum.Equals(AlignmentEnum.Middle))
-            {
-                vertex.Offset.Set(offset.x - width / 2, offset.y);
-            }
-            else if (alignmentEnum.Equals(AlignmentEnum.Right))
-            {
-                vertex.Offset.Set(offset.x - width, offset.y);
-            }
-            else
-            {
-                vertex.Offset.Set(offset.x, offset.y);
-            }
             float fL = 0.0f;
             float fT = 0.0f;
             float fR = width;
@@ -150,25 +138,6 @@ namespace GameHUD
             //每像素多少uv坐标点
             var xFactor = (info.xMax - info.xMin) / info.Width;
             var yFactor = (info.yMax - info.yMin) / info.Height;
-            for (int i = 0; i < 3; i++)
-            {
-                var vertex = ObjectPool<HUDVertex>.Pop();
-                if (alignmentEnum.Equals(AlignmentEnum.Middle))
-                {
-                    vertex.Offset.Set(offset.x - width / 2, offset.y);
-                }
-                else if (alignmentEnum.Equals(AlignmentEnum.Right))
-                {
-                    vertex.Offset.Set(offset.x - width, offset.y);
-                }
-                else
-                {
-                    vertex.Offset.Set(offset.x, offset.y);
-                }
-
-                vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
-                list.Add(vertex);
-            }
             var list_count = list.size;
             // x y 轴 三段的像素长度
             int x_length0 = 0, x_length1 = 0, x_length2 = 0, y_length0 = 0, y_length1 = 0, y_length2 = 0;
@@ -187,9 +156,9 @@ namespace GameHUD
                             x_length2 = slicevalue.Right;
                         }
                     }
-                    SlicedFill(list[list_count - 3], x_length0, height, 0, 0, info.xMin, uv1, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 2], x_length1, height, 0 + x_length0, 0, uv1, uv2, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 1], x_length2, height, 0 + x_length0 + x_length1, 0, uv2, info.xMax, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 3], x_length0, height, offset.x, offset.y, info.xMin, uv1, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 2], x_length1, height, offset.x + x_length0, offset.y, uv1, uv2, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 1], x_length2, height, offset.x + x_length0 + x_length1, offset.y, uv2, info.xMax, info.yMin, info.yMax);
                 }
                 else
                 {
@@ -202,9 +171,9 @@ namespace GameHUD
                             x_length0 = slicevalue.Left;
                         }
                     }
-                    SlicedFill(list[list_count - 3], x_length0, height, width - xSliceLength, 0, info.xMin, uv1, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 2], x_length1, height, width - xSliceLength + x_length0, 0, uv1, uv2, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 1], x_length2, height, width - x_length2, 0, uv2, info.xMax, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 3], x_length0, height, offset.x + width - xSliceLength, offset.y, info.xMin, uv1, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 2], x_length1, height, offset.x + width - xSliceLength + x_length0, offset.y, uv1, uv2, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 1], x_length2, height, offset.x + width - x_length2, offset.y, uv2, info.xMax, info.yMin, info.yMax);
                 }
 
             }
@@ -225,9 +194,9 @@ namespace GameHUD
                             y_length2 = (int)slicevalue.Top;
                         }
                     }
-                    SlicedFill(list[list_count - 3], width, y_length0, 0, 0, info.xMin, info.xMax, info.yMin, uv1);
-                    SlicedFill(list[list_count - 2], width, y_length1, 0, y_length0, info.xMin, info.xMax, uv1, uv2);
-                    SlicedFill(list[list_count - 1], width, y_length2, 0, ySliceLength - slicevalue.Top, info.xMin, info.xMax, uv2, info.yMax);
+                    SlicedFill(list[list_count - 3], width, y_length0, offset.x, offset.y, info.xMin, info.xMax, info.yMin, uv1);
+                    SlicedFill(list[list_count - 2], width, y_length1, offset.x, y_length0 + offset.y, info.xMin, info.xMax, uv1, uv2);
+                    SlicedFill(list[list_count - 1], width, y_length2, offset.x, ySliceLength - slicevalue.Top + offset.y, info.xMin, info.xMax, uv2, info.yMax);
                 }
                 else
                 {
@@ -241,9 +210,9 @@ namespace GameHUD
                             y_length0 = (int)slicevalue.Bottom;
                         }
                     }
-                    SlicedFill(list[list_count - 3], width, y_length0, width, height - ySliceLength, info.xMin, info.xMax, info.yMin, uv1);
-                    SlicedFill(list[list_count - 2], width, y_length1, width, height - ySliceLength + y_length0, info.xMin, info.xMax, uv1, uv2);
-                    SlicedFill(list[list_count - 1], width, y_length2, width, height - y_length2, info.xMin, info.xMax, uv2, info.yMax);
+                    SlicedFill(list[list_count - 3], width, y_length0, offset.x + width, height - ySliceLength + offset.y, info.xMin, info.xMax, info.yMin, uv1);
+                    SlicedFill(list[list_count - 2], width, y_length1, offset.x + width, height - ySliceLength + y_length0 + offset.y, info.xMin, info.xMax, uv1, uv2);
+                    SlicedFill(list[list_count - 1], width, y_length2, offset.x + width, height - y_length2 + offset.y, info.xMin, info.xMax, uv2, info.yMax);
                 }
             }
 
@@ -262,28 +231,11 @@ namespace GameHUD
             var yFactor = (info.yMax - info.yMin) / info.Height;
             int slice_width = (int)(width - slicevalue.Left - slicevalue.Right);
             int slice_hight = (int)(height - slicevalue.Bottom - slicevalue.Top);
-            var x_uv1 = xFactor * slicevalue.Left+info.xMin;
-            var x_uv2 = xFactor * (info.Width - slicevalue.Right)+info.xMin;
-            var y_uv1 = yFactor * slicevalue.Bottom+info.yMin;
-            var y_uv2 = yFactor * (info.Height - slicevalue.Top)+info.yMin;
-            for (int i = 0; i < 9; i++)
-            {
-                var vertex = ObjectPool<HUDVertex>.Pop();
-                if (alignmentEnum.Equals(AlignmentEnum.Middle))
-                {
-                    vertex.Offset.Set(offset.x - width / 2, offset.y);
-                }
-                else if (alignmentEnum.Equals(AlignmentEnum.Right))
-                {
-                    vertex.Offset.Set(offset.x - width, offset.y);
-                }
-                else
-                {
-                    vertex.Offset.Set(offset.x, offset.y);
-                }
-                vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
-                list.Add(vertex);
-            }
+            var x_uv1 = xFactor * slicevalue.Left + info.xMin;
+            var x_uv2 = xFactor * (info.Width - slicevalue.Right) + info.xMin;
+            var y_uv1 = yFactor * slicevalue.Bottom + info.yMin;
+            var y_uv2 = yFactor * (info.Height - slicevalue.Top) + info.yMin;
+
             int size = list.size;
             //下左
             SlicedFill(list[size - 9], slicevalue.Left, slicevalue.Bottom, 0, 0, info.xMin, x_uv1, info.yMin, y_uv1);
@@ -330,25 +282,48 @@ namespace GameHUD
 
         static StringBuilder sb = new StringBuilder();
         //解析数字图片
-        public static Vector2 PasrseNumber(BetterList<HUDVertex> list, char type, int number)
+        public static Vector2Int PasrseNumber(BetterList<HUDVertex> list, out Material mat, char Perfixe, int gap, int number, bool sign)
         {
-            var number_str = number.ToString();
             var config = HUDManager.Instance.Config;
             sb.Clear();
-            sb.Append(type);
-            sb.Append(type);
+            sb.Append(Perfixe);
+            sb.Append(Perfixe);
             int width = 0;
             int height = 0;
+            mat = null;
+            string number_str;
+            if (sign)
+            {
+                if (number > 0)
+                {
+                    number_str = string.Format("+{0}", number);
+                }
+                else
+                {
+                    number_str = number.ToString();
+                }
+            }
+            else
+            {
+                number_str = Mathf.Abs(number).ToString();
+            }
+
             for (int i = 0; i < number_str.Length; i++)
             {
                 sb.Remove(1, 1);
                 sb.Insert(1, number_str[i]);
                 var info = HUDManager.Instance.GetSprite(sb.ToString());
+                if (info == null)
+                {
+                    Debug.LogWarningFormat("Warning ,{0} not in HUDAtlas !", sb.ToString());
+                    continue;
+                }
+                mat = info.Mat;
                 var vertex = ObjectPool<HUDVertex>.Pop();
                 vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
-                float fL = 0.0f;
+                float fL = width;
                 float fT = 0.0f;
-                float fR = info.Width;
+                float fR = info.Width + width;
                 float fB = info.Height;
 
                 vertex.vecRU.Set(fR, fT);  // 右上角
@@ -367,14 +342,14 @@ namespace GameHUD
                 vertex.uvLU.Set(uvL, uvB);
 
                 list.Add(vertex);
-                width += (info.Width + config.SpriteGap);
+                width += (info.Width + gap);
                 if (height < info.Height)
                 {
                     height = info.Height;
                 }
             }
-            width -= config.SpriteGap;
-            return new Vector2Int(height, height);
+            width -= gap;
+            return new Vector2Int(width, height);
         }
     }
 }

@@ -29,12 +29,19 @@
         <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
         <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
     </ui:VisualElement>
-    <ui:Button text="刷新" display-tooltip-when-elided="true" name="refresh" style="position: absolute; top: 321px; left: 8px;" />
-    <ui:Button text="弹气泡" display-tooltip-when-elided="true" name="talk" style="position: absolute; top: 322px; left: 99px;" />
+    <ui:Button text="刷新" display-tooltip-when-elided="true" name="refresh" style="position: absolute; top: 386px; left: 7px;" />
+    <ui:Button text="弹气泡" display-tooltip-when-elided="true" name="talk" style="position: absolute; top: 387px; left: 95px;" />
     <ui:VisualElement name="blood" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 7px; flex-shrink: 0; top: 243px; justify-content: flex-start;">
         <ui:Label text="血条" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
         <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
         <ui:Label text="类型索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
         <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
     </ui:VisualElement>
+    <ui:VisualElement name="number" style="align-items: auto; overflow: visible; width: 518px; position: absolute; height: 46px; flex-direction: row; left: 7px; flex-shrink: 0; top: 287px; justify-content: flex-start;">
+        <ui:Label text="飘字" display-tooltip-when-elided="true" style="height: 17px; width: 39px; flex-direction: row; align-items: auto; -unity-text-align: middle-left; white-space: nowrap; justify-content: flex-start;" />
+        <ui:TextField picking-mode="Ignore" name="str" style="width: 211px; position: relative; top: 0; left: 0;" />
+        <ui:Label text="前缀索引" display-tooltip-when-elided="true" style="height: 17px; width: 49px; flex-direction: row; align-items: auto; -unity-text-align: lower-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="type" style="width: 52px; position: relative; top: 2px; left: 0;" />
+    </ui:VisualElement>
+    <ui:Button text="弹飘字" display-tooltip-when-elided="true" name="hurt" style="position: absolute; top: 386px; left: 198px;" />
 </ui:UXML>

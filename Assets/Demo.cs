@@ -12,8 +12,9 @@ namespace GameHUD
         public Vector2 offset = new Vector2(0, 1);
         HUDInfo hud;
         string _name, _title, _guide, _icon, _chat_content;
-        ushort _name_index, _title_index, _guild_index, _icon_index, _chat_index,_blood_index;
+        ushort _name_index, _title_index, _guild_index, _icon_index, _chat_index, _blood_index;
         float _blood_percent;
+        int _hurt_number; int _number_type;
         void Start()
         {
             if (config == null || temp == null)
@@ -166,7 +167,7 @@ namespace GameHUD
                     var btn = element as Button;
                     btn.RegisterCallback<UnityEngine.UIElements.ClickEvent>((click) =>
                     {
-                        hud.BloodVisable(true,(HUDRelationEnum)_blood_index);
+                        hud.BloodVisable(true, (HUDRelationEnum)_blood_index);
                         hud.UpdateBloodPercent(_blood_percent);
                         hud.UpdateHudInfo(HudComponentEnum.Name, _name, (HUDRelationEnum)_name_index);
                         hud.UpdateHudInfo(HudComponentEnum.Title, _title, (HUDRelationEnum)_title_index);
@@ -185,7 +186,8 @@ namespace GameHUD
                             hud.Talk(_chat_index, _chat_content);
                         }
                     });
-                }else if (element.name == "blood")
+                }
+                else if (element.name == "blood")
                 {
                     var max = element.contentContainer.childCount;
                     for (int k = 0; k < max; k++)
@@ -195,9 +197,9 @@ namespace GameHUD
                         {
                             child.RegisterCallback<ChangeEvent<string>>((new_str) =>
                             {
-                                float.TryParse(new_str.newValue,out _blood_percent);
+                                float.TryParse(new_str.newValue, out _blood_percent);
                                 var t = child as TextField;
-                                t.value = _blood_percent.ToString();
+                                t.value = new_str.newValue;
                             });
                         }
                         else if (child.name == "type")
@@ -210,6 +212,49 @@ namespace GameHUD
                             });
                         }
                     }
+                }
+                else if (element.name == "number")
+                {
+                    var max = element.contentContainer.childCount;
+                    for (int k = 0; k < max; k++)
+                    {
+                        var child = element.contentContainer.ElementAt(k);
+                        if (child.name == "str")
+                        {
+                            child.RegisterCallback<ChangeEvent<string>>((new_str) =>
+                            {
+                                var t = child as TextField;
+                                int.TryParse(new_str.newValue, out _hurt_number);
+                                t.value = _hurt_number.ToString();
+                            });
+                        }
+                        else if (child.name == "type")
+                        {
+                            child.RegisterCallback<ChangeEvent<string>>((new_str) =>
+                            {
+                                var t = child as TextField;
+                                int.TryParse(new_str.newValue, out _number_type);
+                                t.value = _number_type.ToString();
+                            });
+                        }
+                    }
+                }
+                else if (element.name == "hurt")
+                {
+                    var btn = element as Button;
+                    btn.RegisterCallback<UnityEngine.UIElements.ClickEvent>((click) =>
+                    {
+                        if (config.NumberTypes != null && config.NumberTypes.Count > 0)
+                        {
+                            var r = new Unity.Mathematics.Random();
+                            r.InitState((uint)System.Guid.NewGuid().GetHashCode());
+                            var x = r.NextFloat(-3f, 3f);
+                            var pos = new Vector2(x, 0);
+                            hud.HurtNumber((HudNumberType)_number_type, _hurt_number, pos);
+                        }
+
+
+                    });
                 }
             }
         }

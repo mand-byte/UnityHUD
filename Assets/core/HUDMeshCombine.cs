@@ -50,30 +50,41 @@ namespace GameHUD
             {
                 for (int i = 0; i < _meshs.size; i++)
                 {
-                    _meshs[i].UpdateMesh();
+                    if (_meshs[i].Dirty)
+                        _meshs[i].UpdateMesh();
                 }
             }
         }
 
 
-        public override void UpdateOffset(Vector2 offset)
+        protected override void UpdateOffset(Vector2 offset)
         {
             if (_meshs != null)
             {
                 for (int i = 0; i < _meshs.size; i++)
                 {
-                    _meshs[i].UpdateOffset(offset);
+                    _meshs[i].Offset = offset;
                 }
             }
         }
 
-        public override void UpdatePos(Vector3 role)
+        protected override void UpdatePos(Vector3 role)
         {
             if (_meshs != null)
             {
                 for (int i = 0; i < _meshs.size; i++)
                 {
-                    _meshs[i].UpdatePos(role);
+                    _meshs[i].RolePos = role;
+                }
+            }
+        }
+        protected override void UpdateColor(Color32 c)
+        {
+            if (_meshs != null)
+            {
+                for (int i = 0; i < _meshs.size; i++)
+                {
+                    _meshs[i].mColor = c;
                 }
             }
         }

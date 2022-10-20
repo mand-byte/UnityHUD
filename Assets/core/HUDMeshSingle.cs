@@ -10,7 +10,6 @@ namespace GameHUD
         protected BetterList<Vector3> mVerts = new BetterList<Vector3>();
         //相对人物偏移坐标 使用uv2
         protected BetterList<Vector2> mOffset = new BetterList<Vector2>();
-        protected BetterList<Vector2> mOutlins = new BetterList<Vector2>();
         protected BetterList<Vector2> mUvs = new BetterList<Vector2>();
         protected BetterList<Color32> mCols = new BetterList<Color32>();
         protected BetterList<int> mIndices = new BetterList<int>();
@@ -35,13 +34,14 @@ namespace GameHUD
             }
         }
         protected BetterList<HUDVertex> m_SpriteVertex = new BetterList<HUDVertex>();
-        
+
         public override void Release()
         {
             mVerts.Clear();
             mUvs.Clear();
             mCols.Clear();
             mIndices.Clear();
+            mOffset.Clear();
             mesh?.Clear();
             for (int i = 0; i < m_SpriteVertex.size; i++)
             {
@@ -86,7 +86,6 @@ namespace GameHUD
                 mesh.hideFlags = HideFlags.DontSave;
                 mesh.name = "hud_mesh";
                 mesh.MarkDynamic();
-                HUDManager.Instance.Dirty = true;
             }
             if (rebuildIndices || mesh.vertexCount != mVerts.size)
             {
@@ -97,27 +96,14 @@ namespace GameHUD
             mesh.uv2 = mOffset.buffer;
             mesh.colors32 = mCols.buffer;
             mesh.triangles = mIndices.buffer;
+            HUDManager.Instance.Dirty = true;
             Dirty = false;
         }
-        // protected Vector2 GetTxtAlign()
-        // {
-        //     Vector2 vOffset = Vector2.zero;
-        //     Vector2 alignOffset = Vector2.zero;
-        //     if (Config.Align.Equals(AlignmentEnum.Middle))
-        //     {
-        //         alignOffset.Set(-Size.x / 2, 0);
-        //     }
-        //     else if (Config.Align.Equals(AlignmentEnum.Right))
-        //     {
-        //         alignOffset.Set(-Size.x, 0);
-        //     }
-        //     return alignOffset;
-        // }
         void FillVertex()
         {
             PrepareWrite(m_SpriteVertex.size * 4);
             Vector2 vOffset = Vector2.zero;
-           // Vector2 alignOffset = GetTxtAlign();
+            // Vector2 alignOffset = GetTxtAlign();
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
@@ -128,14 +114,12 @@ namespace GameHUD
 
                 vOffset = v.vecRU;
                 vOffset += v.Offset;
-                //vOffset += alignOffset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 mOffset.Add(vOffset);
 
                 vOffset = v.vecRD;
                 vOffset += v.Offset;
-               // vOffset += alignOffset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 mOffset.Add(vOffset);
@@ -145,14 +129,12 @@ namespace GameHUD
 
                 vOffset = v.vecLD;
                 vOffset += v.Offset;
-               // vOffset += alignOffset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 mOffset.Add(vOffset);
 
                 vOffset = v.vecLU;
                 vOffset += v.Offset;
-               // vOffset += alignOffset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 mOffset.Add(vOffset);
@@ -165,7 +147,6 @@ namespace GameHUD
                 mCols.Add(v.clrRD);
                 mCols.Add(v.clrLD);
                 mCols.Add(v.clrLU);
-
             }
         }
 
@@ -211,20 +192,28 @@ namespace GameHUD
 
         }
         //更新角色世界坐标
-        public override void UpdatePos(Vector3 role)
+        protected override void UpdatePos(Vector3 role)
         {
-            if (Dirty)
-            {
-                UpdateMesh();
-            }
             for (int i = 0; i < mVerts.size; i++)
             {
                 mVerts[i] = role;
             }
-            RolePos = role;
+            _rolePos = role;
             if (mesh != null)
             {
                 mesh.vertices = mVerts.buffer;
+            }
+        }
+        protected override void UpdateColor(Color32 c)
+        {
+            for (int i = 0; i < mCols.size; i++)
+            {
+                mCols[i] = c;
+            }
+            _color = c;
+            if (mesh != null&&mesh.vertexCount==mCols.buffer.Length)
+            {
+                mesh.colors32 = mCols.buffer;
             }
         }
         // //更新缩放
@@ -241,12 +230,8 @@ namespace GameHUD
         //     }
         // }
         //更新因其他hud显示或隐藏 要改变此hud的偏移位置
-        public override void UpdateOffset(Vector2 offset)
+        protected override void UpdateOffset(Vector2 offset)
         {
-            if (Dirty)
-            {
-                UpdateMesh();
-            }
             var vOffset = Vector2.zero;
             var last_index = 0;
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)

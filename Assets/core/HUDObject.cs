@@ -103,7 +103,7 @@ namespace GameHUD
                     _all_mesh[(int)HudComponentEnum.Blood] = blood_mesh;
                 }
                 var blood = blood_mesh as HUDBloodMesh;
-                blood.Create(relationEnum, _offset);
+                blood.Create(relationEnum, RolePos, _offset);
                 MeshHide(HudComponentEnum.Blood, false);
             }
             else
@@ -122,6 +122,7 @@ namespace GameHUD
             _trans = trans;
             _offset = offset * OFFSETSCALE;
             config = HUDManager.Instance.Config;
+            _init = true;
         }
 
         void BuildText(HudComponentEnum enume, HUDRelationEnum relation, string str, Vector2 _offset)
@@ -203,13 +204,17 @@ namespace GameHUD
             }
             _offset.Set(_offset.x, _offset.y + ItemLineGap);
             text_mesh.ItemLineGap = ItemLineGap;
-            text_mesh.PushText(str, color, colorOutline, _offset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
+            text_mesh.PushText(str, color, colorOutline, RolePos, _offset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
         }
         public void PushNumber(int number, HudNumberType type, Vector2 offset)
         {
+            if (!config.NumberTypeDict.ContainsKey(type))
+            {
+                return;
+            }
             var number_mesh = ObjectPool<HUDNumberMesh>.Pop();
-            var _type = config.NumberTypeDict[type];
-            number_mesh.PushNumber(number, _type, offset);
+            number_mesh.PushNumber(number, type, RolePos, offset);
+            _dynamical_mesh.Add(number_mesh);
         }
         public void PushTalk(int idx, string content)
         {
@@ -231,7 +236,7 @@ namespace GameHUD
             }
             var v = GetLastComponentOffset(HudComponentEnum.GuildIcon);
             var chat_mesh = ObjectPool<HUDTalkMesh>.Pop();
-            chat_mesh.PushTalk(idx, content, v, this);
+            chat_mesh.PushTalk(idx, content, RolePos, v);
             _dynamical_mesh.Add(chat_mesh);
         }
         void BuildSprite(HudComponentEnum enume, string name, Vector2 _offset)
@@ -257,7 +262,7 @@ namespace GameHUD
             }
             _offset.Set(_offset.x, _offset.y + config.SpriteLineGap);
             sp_mesh.ItemLineGap = config.SpriteLineGap;
-            sp_mesh.PushSprite(name, _offset, AlignmentEnum.Middle);
+            sp_mesh.PushSprite(name, RolePos, _offset, AlignmentEnum.Middle);
         }
         Vector3 RolePos = Vector3.zero;
 
@@ -299,11 +304,11 @@ namespace GameHUD
                     var mesh = _all_mesh[i];
                     if (mesh != null && mesh.IsValid)
                     {
-                        mesh.UpdateLogic();
                         if (mesh.Dirty)
                         {
                             mesh.UpdateMesh();
                         }
+                        mesh.UpdateLogic();
                     }
                 }
                 for (int i = 0; i < _dynamical_mesh.size; i++)
@@ -311,30 +316,35 @@ namespace GameHUD
                     var mesh = _dynamical_mesh[i];
                     if (mesh != null && mesh.IsValid)
                     {
-                        mesh.UpdateLogic();
                         if (mesh.Dirty)
                         {
                             mesh.UpdateMesh();
                         }
+                        mesh.UpdateLogic();
                     }
                 }
-            }
-        }
-        public void DynamicalMeshRecyle(HUDMesh mesh)
-        {
-            for (int i = 0; i < _dynamical_mesh.size; i++)
-            {
-                if (mesh.Equals(_dynamical_mesh[i]))
+                for (int i = _dynamical_mesh.size - 1; i >= 0; i--)
                 {
-                    MeshRecyle(mesh);
-                    _dynamical_mesh.RemoveAt(i);
-                    break;
+                    var mesh = _dynamical_mesh[i];
+                    if (mesh == null || !mesh.IsValid)
+                    {
+                        MeshRecyle(mesh);
+                        _dynamical_mesh.RemoveAt(i);
+                    }
                 }
+
             }
         }
         void MeshRecyle(HUDMesh mesh)
         {
-
+            if (mesh == null)
+            {
+                return;
+            }
+            if (mesh.IsValid)
+            {
+                mesh.Release();
+            }
             //回收对话框
             if (typeof(HUDTalkMesh).IsInstanceOfType(mesh))
             {
@@ -361,6 +371,7 @@ namespace GameHUD
                 var m = mesh as HUDBloodMesh;
                 ObjectPool<HUDBloodMesh>.Push(m);
             }
+
         }
         //检查是否需要更新坐标
         void CheckPosChange()
@@ -372,14 +383,14 @@ namespace GameHUD
                 {
                     if (_all_mesh[i] != null && _all_mesh[i].IsValid)
                     {
-                        _all_mesh[i].UpdatePos(RolePos);
+                        _all_mesh[i].RolePos = RolePos;
                     }
                 }
                 for (int i = 0; i < _dynamical_mesh.size; i++)
                 {
-                    if (_dynamical_mesh[i] != null && _dynamical_mesh[i].IsValid)
+                    if (_dynamical_mesh[i] != null && _dynamical_mesh[i].IsValid && _dynamical_mesh[i].FollowRole)
                     {
-                        _dynamical_mesh[i].UpdatePos(RolePos);
+                        _dynamical_mesh[i].RolePos = RolePos;
                     }
                 }
             }
@@ -403,7 +414,7 @@ namespace GameHUD
                         offset.Set(offset.x, offset.y - size.y);
                     else
                         offset.Set(offset.x, offset.y + size.y);
-                    mesh.UpdateOffset(offset);
+                    mesh.Offset = offset;
                 }
             }
             if (isHide)
@@ -420,10 +431,6 @@ namespace GameHUD
                 var mesh = _all_mesh[i];
                 if (mesh != null)
                 {
-                    if (mesh.IsValid)
-                    {
-                        mesh.Release();
-                    }
                     MeshRecyle(mesh);
                     _all_mesh[i] = null;
                 }
@@ -433,10 +440,6 @@ namespace GameHUD
                 var mesh = _dynamical_mesh[i];
                 if (mesh != null)
                 {
-                    if (mesh.IsValid)
-                    {
-                        _all_mesh[i].Release();
-                    }
                     MeshRecyle(mesh);
                     _dynamical_mesh.RemoveAt(i);
                 }

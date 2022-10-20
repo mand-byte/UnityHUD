@@ -7,13 +7,68 @@ namespace GameHUD
 {
     internal abstract class HUDMesh : HUDMeshInterface
     {
+        protected bool _FollowRole = true;
+        public bool FollowRole
+        {
+            get
+            {
+                return _FollowRole;
+            }
+        }
         //原始尺寸
         public Vector2Int Size;
         //记录需要偏移的坐标
         protected Vector2 _offset;
         public int ItemLineGap;
-        public Vector2 Offset => _offset;
-        protected Vector3 RolePos;
+        public Vector2 Offset
+        {
+            get
+            {
+                return _offset;
+            }
+            set
+            {
+                if (_dirty)
+                {
+                    _offset = value;
+                }
+                else
+                {
+                    UpdateOffset(value);
+                }
+            }
+        }
+        protected Vector3 _rolePos;
+        public Vector3 RolePos
+        {
+            set
+            {
+                if (_dirty)
+                {
+                    _rolePos = value;
+                }
+                else
+                {
+                    UpdatePos(value);
+                }
+            }
+            get
+            {
+                return _rolePos;
+            }
+        }
+        protected Color32 _color;
+        public Color32 mColor
+        {
+            set
+            {
+                UpdateColor(value);
+            }
+            get
+            {
+                return _color;
+            }
+        }
         public float Scale = 1f;
         protected bool _valid;
         public bool IsValid
@@ -24,6 +79,10 @@ namespace GameHUD
             }
         }
         bool _dirty;
+        ///<summary>
+        ///Dirty为true会导致顶点 uv offset color 索引全部更新,
+        ///如仅须更新顶点坐标,偏移值 就直接修改_rolePos,_offset
+        ///</summary>
         public bool Dirty
         {
             get
@@ -57,15 +116,18 @@ namespace GameHUD
         public abstract void RenderTo(CommandBuffer cmdBuffer);
 
 
-        public abstract void UpdateOffset(Vector2 offset);
+        protected abstract void UpdateOffset(Vector2 offset);
 
 
-        public abstract void UpdatePos(Vector3 role);
-        public virtual void UpdateLogic(){
+        protected abstract void UpdatePos(Vector3 role);
+        protected abstract void UpdateColor(Color32 c);
+        public virtual void UpdateLogic()
+        {
 
         }
-        public virtual void Rebuild(){
-            
+        public virtual void Rebuild()
+        {
+
         }
 
     }

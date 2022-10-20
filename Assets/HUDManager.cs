@@ -95,44 +95,44 @@ namespace GameHUD
                     GameObject.Destroy(_configObject);
                 }
                 _configObject = config;
-                _configObject.NumberTypeDict = new Dictionary<HudNumberType, char>();
-                int min = Math.Min(config.NumberTypePerfixes.Count, config.NumberTypes.Count);
-                for (int i = 0; i < min; i++)
-                {
-                    _configObject.NumberTypeDict.Add(config.NumberTypes[i], config.NumberTypePerfixes[i]);
-                }
                 InitFont();
                 InitAtlas();
             }
-            _configObject.BloodRelationDict?.Clear();
+
             _configObject.NameRelationDict?.Clear();
             for (int i = 0; i < _configObject.NameRelationArray.Length; i++)
             {
                 var info = _configObject.NameRelationArray[i];
-                if (info == null) continue;
                 _configObject.NameRelationDict[info.Relation] = info;
             }
-            if(_configObject.GuildRelationArray!=null)
-            for (int i = 0; i < _configObject.GuildRelationArray.Length; i++)
-            {
-                var info = _configObject.GuildRelationArray[i];
-                if (info == null) continue;
-                _configObject.GuildRelationDict[info.Relation] = info;
-            }
-            if(_configObject.BloodRelationArray!=null)
-            for (int i = 0; i < _configObject.BloodRelationArray.Length; i++)
-            {
-                var info = _configObject.BloodRelationArray[i];
-                if (info == null) continue;
-                _configObject.BloodRelationDict[info.Relation] = info;
-            }
-            if(_configObject.TitleInfoArray!=null)
-            for (int i = 0; i < _configObject.TitleInfoArray.Length; i++)
-            {
-                var info = _configObject.TitleInfoArray[i];
-                if (info == null) continue;
-                _configObject.TitleRelationDict[info.Relation] = info;
-            }
+            _configObject.GuildRelationDict.Clear();
+            if (_configObject.GuildRelationArray != null)
+                for (int i = 0; i < _configObject.GuildRelationArray.Length; i++)
+                {
+                    var info = _configObject.GuildRelationArray[i];
+                    _configObject.GuildRelationDict[info.Relation] = info;
+                }
+            _configObject.BloodRelationDict?.Clear();
+            if (_configObject.BloodRelationArray != null)
+                for (int i = 0; i < _configObject.BloodRelationArray.Length; i++)
+                {
+                    var info = _configObject.BloodRelationArray[i];
+                    _configObject.BloodRelationDict[info.Relation] = info;
+                }
+            _configObject.TitleRelationDict.Clear();
+            if (_configObject.TitleInfoArray != null)
+                for (int i = 0; i < _configObject.TitleInfoArray.Length; i++)
+                {
+                    var info = _configObject.TitleInfoArray[i];
+                    _configObject.TitleRelationDict[info.Relation] = info;
+                }
+            _configObject.NumberTypeDict.Clear();
+            if (_configObject.NumberTypes != null)
+                for (int i = 0; i < _configObject.NumberTypes.Count; i++)
+                {
+                    var info = _configObject.NumberTypes[i];
+                    _configObject.NumberTypeDict[config.NumberTypes[i].Type] = config.NumberTypes[i];
+                }
             ForceRefresh = true;
         }
         // ///<summary>
@@ -203,13 +203,6 @@ namespace GameHUD
             Debug.LogWarningFormat("GetSprite  str={0} is not exist!!", str);
             return null;
         }
-        public char GetNumberPrefic(HudNumberType type)
-        {
-            _configObject.NumberTypeDict.TryGetValue(type, out var result);
-            return result;
-        }
-
-
         public HUDInfo CreateHUD(long id)
         {
             for (int i = 0; i < _cache_info_list.size; i++)
