@@ -26,18 +26,17 @@ namespace GameHUD
         [Tooltip("数字前缀")]
         public char Perfixe;
 
-        [Tooltip("移动时间")]
-        public float MoveTime;
-        [Tooltip("移动向量")]
-        public Vector2 MoveVect;
-        [Tooltip("变色时间")]
-        public float ColorTime;
-        [Tooltip("最终颜色")]
-        public Color32 Color;
+        [Tooltip("移动曲线")]
+        public AnimationCurve MoveCurve;
+        [Tooltip("渐变曲线")]
+        public AnimationCurve ColorCurve;
+        [Tooltip("缩放曲线")]
+        public AnimationCurve ScaleCurve;
         [Tooltip("数字之间的间隔")]
         public int NumbersGap;
         [Tooltip("数字的对齐方式")]
         public AlignmentEnum NumbersAlign;
+
     }
     [System.Serializable]
     public struct HUDTXTInfoObject
@@ -180,7 +179,7 @@ namespace GameHUD
         [Tooltip("飘字配置")]
         public List<HUDNumberConfig> NumberTypes;
         [HideInInspector, System.NonSerialized]
-        public Dictionary<HudNumberType, HUDNumberConfig> NumberTypeDict=new Dictionary<HudNumberType, HUDNumberConfig>();
+        public Dictionary<HudNumberType, HUDNumberConfig> NumberTypeDict = new Dictionary<HudNumberType, HUDNumberConfig>();
 
 
 

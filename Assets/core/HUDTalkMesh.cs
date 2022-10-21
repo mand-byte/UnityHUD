@@ -83,12 +83,6 @@ namespace GameHUD
                 }
                 _cur_vanishedtime += Time.deltaTime;
             }
-            if (Dirty)
-            {
-                UpdateMesh();
-                Dirty = false;
-            }
-
         }
         public override void Release()
         {

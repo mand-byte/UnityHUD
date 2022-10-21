@@ -69,7 +69,25 @@ namespace GameHUD
                 return _color;
             }
         }
-        public float Scale = 1f;
+        public float Scale
+        {
+            set
+            {
+                if (_dirty)
+                {
+                    _Scale = value;
+                }
+                else
+                {
+                    UpdateScale(value);
+                }
+            }
+            get
+            {
+                return _Scale;
+            }
+        }
+        protected float _Scale = 1f;
         protected bool _valid;
         public bool IsValid
         {
@@ -121,6 +139,8 @@ namespace GameHUD
 
         protected abstract void UpdatePos(Vector3 role);
         protected abstract void UpdateColor(Color32 c);
+        protected abstract void UpdateScale(float c);
+
         public virtual void UpdateLogic()
         {
 

@@ -13,63 +13,81 @@ namespace GameHUD
             public void PushNumber(int number, HudNumberType type, Vector2 offset)
             {
 
-                _offset = offset * HUDObject.OFFSETSCALE;
                 HUDNumberConfig numconfig = Config.NumberTypeDict[type];
-                Size = HUDStringParser.PasrseNumber(m_SpriteVertex, out mMat, numconfig.Perfixe, numconfig.NumbersGap, number,numconfig.Sign);
-                for (int i = 0; i < m_SpriteVertex.size; i++)
-                {
-                    if (numconfig.NumbersAlign.Equals(AlignmentEnum.Left))
-                        m_SpriteVertex[i].Offset = new Vector2(_offset.x, _offset.y);
-                    else if (numconfig.NumbersAlign.Equals(AlignmentEnum.Middle))
-                        m_SpriteVertex[i].Offset = new Vector2(_offset.x - Size.x / 2, _offset.y);
-                    else
-                        m_SpriteVertex[i].Offset = new Vector2(_offset.x - Size.x, _offset.y);
-                }
+                Size = HUDStringParser.PasrseNumber(m_SpriteVertex, out mMat, numconfig.Perfixe, numconfig.NumbersGap, number, numconfig.Sign, numconfig.NumbersAlign);
                 _valid = true;
                 Dirty = true;
+                _offset = offset ;
             }
         }
 
-        Vector2 _endposoffset, _start_offset;
+        Vector2  _start_offset;
         float _all_endtime;
-        float _alpha_starttime, _move_endtime;
         HUDNumberConfig numconfig;
-        float _temp_move_dtime, _temp_color_dtime;
+        AnimationCurve cCurve, sCurve, pCurve;
+        float _cur_time;
         public void PushNumber(int number, HudNumberType type, Vector3 rolePos, Vector2 offset)
         {
             _valid = true;
             _FollowRole = false;
+            Dirty=true;
             numconfig = Config.NumberTypeDict[type];
+            cCurve = numconfig.ColorCurve;
+            sCurve = numconfig.ScaleCurve;
+            pCurve = numconfig.MoveCurve;
+            _all_endtime = 0;
+            if (cCurve.length > 0)
+            {
+                var Keyframe = cCurve[cCurve.length - 1];
+                if (_all_endtime < Keyframe.time)
+                {
+                    _all_endtime = Keyframe.time;
+                }
+            }
+            if (sCurve.length > 0)
+            {
+                var Keyframe = sCurve[sCurve.length - 1];
+                if (_all_endtime < Keyframe.time)
+                {
+                    _all_endtime = Keyframe.time;
+                }
+            }
+            if (pCurve.length > 0)
+            {
+                var Keyframe = pCurve[pCurve.length - 1];
+                if (_all_endtime < Keyframe.time)
+                {
+                    _all_endtime = Keyframe.time;
+                }
+            }
+            _all_endtime += Time.realtimeSinceStartup;
+            _cur_time = Time.realtimeSinceStartup;
+
             var mesh = ObjectPool<HUDNumberMeshBase>.Pop();
+            offset*=HUDObject.OFFSETSCALE;
+            _start_offset = offset;
             Meshs.Add(mesh);
             mesh.PushNumber(number, type, offset);
             mesh.RolePos = rolePos;
-            _start_offset = offset * HUDObject.OFFSETSCALE;
-            _endposoffset = _start_offset + numconfig.MoveVect;
             mesh.mColor = Color.white;
-            _alpha_starttime = numconfig.MoveTime + Time.realtimeSinceStartup;
-            Dirty = true;
-            _move_endtime = Time.realtimeSinceStartup + numconfig.MoveTime;
-            _all_endtime = Time.realtimeSinceStartup + numconfig.MoveTime + numconfig.ColorTime;
-            _temp_move_dtime = 0;
-            _temp_color_dtime = 0;
+            mesh.Scale=1;
+            mesh.Offset=_start_offset;
         }
         public override void UpdateLogic()
         {
-            if (Time.realtimeSinceStartup <= _move_endtime)
-            {
-                _temp_move_dtime += Time.deltaTime;
-                Meshs[0].Offset = Vector2.Lerp(_start_offset, _endposoffset, _temp_move_dtime / numconfig.MoveTime);
-            }
-            else if (numconfig.ColorTime > 0 && _alpha_starttime <= Time.realtimeSinceStartup && Time.realtimeSinceStartup <= _all_endtime)
-            {
-                _temp_color_dtime += Time.deltaTime;
-                Meshs[0].mColor = Color32.Lerp(Color.white, numconfig.Color, _temp_color_dtime / numconfig.ColorTime);
-            }
             if (_all_endtime < Time.realtimeSinceStartup)
             {
                 Release();
+                return;
             }
+            var d =  Time.realtimeSinceStartup-_cur_time;
+            var c = cCurve.Evaluate(d);
+            Meshs[0].mColor = new Color(1, 1, 1, c);
+            var o = pCurve.Evaluate(d);
+            Meshs[0].Offset = _start_offset + new Vector2(0, o * HUDObject.OFFSETSCALE);
+            var s = sCurve.Evaluate(d);
+            Meshs[0].Scale = s;
+
         }
         public override void Release()
         {

@@ -282,7 +282,7 @@ namespace GameHUD
 
         static StringBuilder sb = new StringBuilder();
         //解析数字图片
-        public static Vector2Int PasrseNumber(BetterList<HUDVertex> list, out Material mat, char Perfixe, int gap, int number, bool sign)
+        public static Vector2Int PasrseNumber(BetterList<HUDVertex> list, out Material mat, char Perfixe, int gap, int number, bool sign, AlignmentEnum align)
         {
             var config = HUDManager.Instance.Config;
             sb.Clear();
@@ -349,6 +349,27 @@ namespace GameHUD
                 }
             }
             width -= gap;
+            if (align != AlignmentEnum.Left)
+                for (int i = 0; i < list.size; i++)
+                {
+                    if (align.Equals(AlignmentEnum.Right))
+                    {
+                        var _off = new Vector2(width, 0);
+                        list[i].vecRU -= _off;
+                        list[i].vecRD -= _off;
+                        list[i].vecLD -= _off;
+                        list[i].vecLU -= _off;
+                    }
+                    else if (align.Equals(AlignmentEnum.Middle))
+                    {
+                        var _off = new Vector2(width / 2, 0);
+                        list[i].vecRU -= _off;
+                        list[i].vecRD -= _off;
+                        list[i].vecLD -= _off;
+                        list[i].vecLU -= _off;
+                    }
+                }
+
             return new Vector2Int(width, height);
         }
     }

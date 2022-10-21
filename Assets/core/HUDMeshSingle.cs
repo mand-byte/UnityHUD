@@ -45,6 +45,7 @@ namespace GameHUD
             mesh?.Clear();
             for (int i = 0; i < m_SpriteVertex.size; i++)
             {
+                m_SpriteVertex[i].Offset = Vector2.zero;
                 ObjectPool<HUDVertex>.Push(m_SpriteVertex[i]);
             }
             m_SpriteVertex.Clear();
@@ -113,30 +114,27 @@ namespace GameHUD
                 mVerts.Add(RolePos);
 
                 vOffset = v.vecRU;
-                vOffset += v.Offset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
+                vOffset += v.Offset;
                 mOffset.Add(vOffset);
 
                 vOffset = v.vecRD;
-                vOffset += v.Offset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
+                vOffset += v.Offset;
                 mOffset.Add(vOffset);
 
-
-
-
                 vOffset = v.vecLD;
-                vOffset += v.Offset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
+                vOffset += v.Offset;
                 mOffset.Add(vOffset);
 
                 vOffset = v.vecLU;
-                vOffset += v.Offset;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
+                vOffset += v.Offset;
                 mOffset.Add(vOffset);
 
                 mUvs.Add(v.uvRU);
@@ -199,7 +197,7 @@ namespace GameHUD
                 mVerts[i] = role;
             }
             _rolePos = role;
-            if (mesh != null)
+            if (mesh != null && mesh.vertexCount == mVerts.buffer.Length)
             {
                 mesh.vertices = mVerts.buffer;
             }
@@ -211,24 +209,24 @@ namespace GameHUD
                 mCols[i] = c;
             }
             _color = c;
-            if (mesh != null&&mesh.vertexCount==mCols.buffer.Length)
+            if (mesh != null && mesh.vertexCount == mCols.buffer.Length)
             {
                 mesh.colors32 = mCols.buffer;
             }
         }
         // //更新缩放
-        // public void UpdateScale(float _scale)
-        // {
-        //     for (int i = 0; i < mOffset.size; i++)
-        //     {
-        //         mOffset[i] = mOffset[i] / Scale * _scale;
-        //     }
-        //     Scale = _scale;
-        //     if (mesh != null)
-        //     {
-        //         mesh.uv2 = mOffset.buffer;
-        //     }
-        // }
+        protected override void UpdateScale(float scale)
+        {
+            for (int i = 0; i < mOffset.size; i++)
+            {
+                mOffset[i] = mOffset[i] / this._Scale * scale;
+            }
+            this._Scale = scale;
+            if (mesh != null && mesh.vertexCount == mOffset.buffer.Length)
+            {
+                mesh.uv2 = mOffset.buffer;
+            }
+        }
         //更新因其他hud显示或隐藏 要改变此hud的偏移位置
         protected override void UpdateOffset(Vector2 offset)
         {
@@ -237,31 +235,31 @@ namespace GameHUD
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
-                v.Offset -= _offset;
-                v.Offset += offset;
+                 v.Offset -= _offset;
+                 v.Offset += offset;
                 for (int j = 0; j < 4; j++)
                 {
                     vOffset = v.vecRU;
-                    vOffset += v.Offset;
                     vOffset.x *= Scale;
                     vOffset.y *= Scale;
+                    vOffset += v.Offset;
                     mOffset[i * 4] = vOffset;
                     vOffset = v.vecRD;
-                    vOffset += v.Offset;
                     vOffset.x *= Scale;
                     vOffset.y *= Scale;
+                    vOffset += v.Offset;
                     mOffset[4 * i + 1] = vOffset;
 
                     vOffset = v.vecLD;
-                    vOffset += v.Offset;
                     vOffset.x *= Scale;
                     vOffset.y *= Scale;
+                    vOffset += v.Offset;
                     mOffset[4 * i + 2] = vOffset;
 
                     vOffset = v.vecLU;
-                    vOffset += v.Offset;
                     vOffset.x *= Scale;
                     vOffset.y *= Scale;
+                    vOffset += v.Offset;
                     mOffset[4 * i + 3] = vOffset;
                     last_index++;
                 }

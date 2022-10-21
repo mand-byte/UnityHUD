@@ -54,6 +54,7 @@ namespace GameHUD
                         _meshs[i].UpdateMesh();
                 }
             }
+            Dirty=false;
         }
 
 
@@ -85,6 +86,17 @@ namespace GameHUD
                 for (int i = 0; i < _meshs.size; i++)
                 {
                     _meshs[i].mColor = c;
+                }
+            }
+        }
+
+        protected override void UpdateScale(float c)
+        {
+            if (_meshs != null)
+            {
+                for (int i = 0; i < _meshs.size; i++)
+                {
+                    _meshs[i].Scale = c;
                 }
             }
         }
