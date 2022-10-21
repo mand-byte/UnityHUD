@@ -117,8 +117,7 @@ namespace GameHUD
         public ushort LineGap;
         [Tooltip("一行字最大宽度  \n宽度计算方式为纯中文情况下 (字体大小+间隔)*字数")]
         public ushort MaxLineWidth;
-        [Tooltip("文字对其方式")]
-        public AlignmentEnum Align;
+   
         [Tooltip("字的描边厚度,\n 0为无描边"), Range(0, 1)]
         public float OutlineWidth;
         [Tooltip("字的描边颜色")]

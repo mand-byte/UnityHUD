@@ -13,7 +13,7 @@ namespace GameHUD
         FontStyle style;
         int CharGap; int LineGap;
         AlignmentEnum alignment; int widthlimit = 0;
-        public void PushText(string str, List<Color32> color, Color32 outlineColor,Vector3 rolepos, Vector2 offset, float outlineWidth, int fontSize, int CharGap, int TxtLineGap, FontStyle style, AlignmentEnum alignment, int widthlimit = 0)
+        public void PushText(string str, List<Color32> color, Color32 outlineColor, Vector3 rolepos, Vector2 offset, float outlineWidth, int fontSize, int CharGap, int TxtLineGap, FontStyle style, AlignmentEnum alignment, int widthlimit = 0)
         {
             if (_valid)
             {
@@ -36,7 +36,7 @@ namespace GameHUD
             this.alignment = alignment;
             this.widthlimit = widthlimit;
             Rebuild();
-            _rolePos=rolepos;
+            _rolePos = rolepos;
 
         }
         public override void Rebuild()

@@ -10,14 +10,13 @@ namespace GameHUD
     {
         private class HUDNumberMeshBase : HUDMeshSingle
         {
-            public void PushNumber(int number, HudNumberType type, Vector2 offset)
+            public void PushNumber(int number, HudNumberType type)
             {
 
                 HUDNumberConfig numconfig = Config.NumberTypeDict[type];
                 Size = HUDStringParser.PasrseNumber(m_SpriteVertex, out mMat, numconfig.Perfixe, numconfig.NumbersGap, number, numconfig.Sign, numconfig.NumbersAlign);
                 _valid = true;
                 Dirty = true;
-                _offset = offset ;
             }
         }
 
@@ -67,7 +66,7 @@ namespace GameHUD
             offset*=HUDObject.OFFSETSCALE;
             _start_offset = offset;
             Meshs.Add(mesh);
-            mesh.PushNumber(number, type, offset);
+            mesh.PushNumber(number, type);
             mesh.RolePos = rolePos;
             mesh.mColor = Color.white;
             mesh.Scale=1;

@@ -28,14 +28,9 @@ namespace GameHUD
             }
             set
             {
-                if (_dirty)
-                {
-                    _offset = value;
-                }
-                else
-                {
-                    UpdateOffset(value);
-                }
+
+                UpdateOffset(value);
+
             }
         }
         protected Vector3 _rolePos;

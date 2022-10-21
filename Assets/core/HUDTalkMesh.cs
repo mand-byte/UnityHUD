@@ -8,8 +8,7 @@ namespace GameHUD
         public bool ReadyRecycle;
         float _cur_showtime = 0, _cur_vanishedtime = 0, _max_showtime = 0, _max_vanishedtime = 0;
         string str; int idx;
-
-        public void PushTalk(int idx, string content,Vector3 rolepos, Vector2 offset)
+        public void PushTalk(int idx, string content, Vector3 rolepos, Vector2 offset)
         {
             _FollowRole = true;
             if (_valid)
@@ -29,9 +28,9 @@ namespace GameHUD
                 Meshs.Add(sprite);
                 Meshs.Add(txt);
             }
+            _offset = offset+Config.TalkInfoArray[idx].Offset;
+            _rolePos = rolepos;
             Rebuild();
-            _offset = new Vector2(offset.x, offset.y + Config.TalkInfoArray[idx].ItemLineGap);
-            _rolePos=rolepos;
 
         }
         public override void Rebuild()
@@ -46,21 +45,24 @@ namespace GameHUD
             var chat_info = Config.TalkInfoArray[idx];
             _max_showtime = Config.TalkInfoArray[idx].NormalShowTime;
             _max_vanishedtime = Config.TalkInfoArray[idx].VanishedTime;
-            var txt_offset = _offset + new Vector2(chat_info.ContentSliceValue.Left, chat_info.ContentSliceValue.Bottom);
-            txt.PushText(str, chat_info.FontColor, chat_info.NameColorSD,_rolePos, txt_offset, chat_info.OutlineWidth, chat_info.FontSize, chat_info.CharGap, chat_info.LineGap, chat_info.Style, chat_info.Align, chat_info.MaxLineWidth);
+            txt.PushText(str, chat_info.FontColor, chat_info.NameColorSD, _rolePos, Vector2.zero, chat_info.OutlineWidth, chat_info.FontSize, chat_info.CharGap, chat_info.LineGap, chat_info.Style, AlignmentEnum.Left, chat_info.MaxLineWidth);
             var sp_width = chat_info.ContentSliceValue.Left + txt.Size.x + chat_info.ContentSliceValue.Right;
             var sp_height = chat_info.ContentSliceValue.Top + txt.Size.y + chat_info.ContentSliceValue.Bottom;
-            sprite.PushSliceSprite(chat_info.Sprite,_rolePos, _offset, sp_width, sp_height, chat_info.BGSliceValue, chat_info.Align);
+            sprite.PushSliceSprite(chat_info.Sprite, _rolePos, _offset, sp_width, sp_height, chat_info.BGSliceValue, chat_info.ItemAlign);
+
             Dirty = true;
             if (chat_info.ItemAlign.Equals(AlignmentEnum.Middle))
             {
-                sprite.Offset=new Vector2(sprite.Offset.x - sp_width / 2, sprite.Offset.y);
-                txt.Offset=new Vector2(txt.Offset.x - sp_width / 2, txt.Offset.y);
+
+                txt.Offset = new Vector2(sprite.Offset.x + chat_info.ContentSliceValue.Left - sp_width / 2, sprite.Offset.y + chat_info.ContentSliceValue.Bottom + txt.Size.y - chat_info.FontSize);
             }
             else if (chat_info.ItemAlign.Equals(AlignmentEnum.Right))
             {
-                sprite.Offset=new Vector2(sprite.Offset.x - sp_width, sprite.Offset.y);
-                txt.Offset=new Vector2(txt.Offset.x - sp_width, txt.Offset.y);
+                txt.Offset = new Vector2(sprite.Offset.x + chat_info.ContentSliceValue.Left - sp_width, sprite.Offset.y + chat_info.ContentSliceValue.Bottom + txt.Size.y - chat_info.FontSize);
+            }
+            else
+            {
+                txt.Offset = new Vector2(sprite.Offset.x + chat_info.ContentSliceValue.Left, sprite.Offset.y + chat_info.ContentSliceValue.Bottom + txt.Size.y - chat_info.FontSize);
             }
 
         }

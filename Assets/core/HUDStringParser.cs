@@ -4,15 +4,53 @@ using UnityEngine;
 namespace GameHUD
 {
     internal static class HUDStringParser
-    {//解析文字
-        public static Vector2Int ParseText(BetterList<HUDVertex> list, string str, Color32 color0, Color32 color1, Color32 color2, Color32 color3, Vector2 offset, int size, int CharGap, int LineGap, FontStyle style, AlignmentEnum alignmentEnum, int widthlimit = 0)
+    {
+        public static Vector2Int GetStrOffsetByAlignment(string str, Vector2 input, ref Vector2 output, int size, int CharGap, int LineGap, FontStyle style, AlignmentEnum align, int widthlimit = 0)
         {
             var config = HUDManager.Instance.Config;
             int total_width = 0;
             int line = 0;
-            LineGap = 6;
             int temp_height = 0;
             config.Font.RequestCharactersInTexture(str, size, style);
+            for (int i = 0; i < str.Length; i++)
+            {
+                if (config.Font.GetCharacterInfo(str[i], out var ch, size, style))
+                {
+                    if (temp_height < ch.glyphHeight)
+                    {
+                        temp_height = ch.glyphHeight;
+                    }
+                    var temp_width = total_width + ch.advance + CharGap;
+                    if (widthlimit > 0 && temp_width >= widthlimit)
+                    {
+                        line++;
+                        total_width = 0;
+                    }
+                    total_width += (ch.advance + CharGap);
+                }
+            }
+            total_width = widthlimit == 0 || line == 0 ? total_width - CharGap : widthlimit;
+            var height = (size + LineGap) * (line + 1);
+            if (align.Equals(AlignmentEnum.Right))
+            {
+                output = input - new Vector2(total_width, -line * (size + LineGap));
+            }
+            else if (align.Equals(AlignmentEnum.Middle))
+            {
+                output = input - new Vector2(total_width / 2, -line * (size + LineGap));
+            }
+            output = input;
+            return new Vector2Int(total_width, height);
+        }
+        //解析文字
+        public static Vector2Int ParseText(BetterList<HUDVertex> list, string str, Color32 color0, Color32 color1, Color32 color2, Color32 color3, Vector2 offset, int size, int CharGap, int LineGap, FontStyle style, AlignmentEnum align, int widthlimit = 0)
+        {
+            var config = HUDManager.Instance.Config;
+            int total_width = 0;
+            int line = 0;
+            int temp_height = 0;
+            config.Font.RequestCharactersInTexture(str, size, style);
+            int count = 0;
             for (int i = 0; i < str.Length; i++)
             {
                 if (config.Font.GetCharacterInfo(str[i], out var ch, size, style))
@@ -22,18 +60,12 @@ namespace GameHUD
                     {
                         temp_height = ch.glyphHeight;
                     }
+                    count++;
                     vertex.uvRU = ch.uvBottomRight;
                     vertex.uvRD = ch.uvTopRight;
                     vertex.uvLD = ch.uvTopLeft;
                     vertex.uvLU = ch.uvBottomLeft;
-                    float fL = ch.minX;
-                    float fT = ch.minY;
-                    float fR = ch.maxX;
-                    float fB = ch.maxY;
-                    vertex.vecRU.Set(fR, fT);  // 右上角
-                    vertex.vecRD.Set(fR, fB);  // 右下角
-                    vertex.vecLD.Set(fL, fB);  // 左下角
-                    vertex.vecLU.Set(fL, fT);  // 左上角
+
                     vertex.clrLD = color1;
                     vertex.clrLU = color0;
                     vertex.clrRU = color3;
@@ -44,39 +76,37 @@ namespace GameHUD
                         line++;
                         total_width = 0;
                     }
-                    vertex.Offset.Set(total_width + offset.x, -line * (temp_height + LineGap));
+                    float fL = ch.minX + total_width;
+                    float fT = ch.minY - line * (temp_height + LineGap);
+                    float fR = ch.maxX + total_width;
+                    float fB = ch.maxY - line * (temp_height + LineGap);
+                    vertex.vecRU.Set(fR, fT);  // 右上角
+                    vertex.vecRD.Set(fR, fB);  // 右下角
+                    vertex.vecLD.Set(fL, fB);  // 左下角
+                    vertex.vecLU.Set(fL, fT);  // 左上角
                     total_width += (ch.advance + CharGap);
                     list.Add(vertex);
                 }
             }
-            total_width = line > 0 ? widthlimit : total_width - CharGap;
-            var first_index = list.size - str.Length;
-            var offset_y = (size + LineGap) * line;
+            total_width = widthlimit == 0 || line == 0 ? total_width - CharGap : widthlimit;
             var height = (size + LineGap) * (line + 1);
-            if (alignmentEnum.Equals(AlignmentEnum.Middle))
+            int Length = list.size - 1;
+            for (int i = 0; i < count; i++)
             {
+                var vertex = list[Length - i];
+                if (align.Equals(AlignmentEnum.Right))
+                {
+                    vertex.Offset = offset - new Vector2(total_width, -line * (size + LineGap));
+                }
+                else if (align.Equals(AlignmentEnum.Middle))
+                {
+                    vertex.Offset = offset - new Vector2(total_width / 2, -line * (size + LineGap));
+                }
+                else
+                {
+                    vertex.Offset = offset;
+                }
 
-                for (int i = 0; i < str.Length; i++)
-                {
-                    var v = list[first_index + i].Offset;
-                    list[first_index + i].Offset = new Vector2(v.x - total_width / 2, v.y + offset_y + LineGap + offset.y);
-                }
-            }
-            else if (alignmentEnum.Equals(AlignmentEnum.Right))
-            {
-                for (int i = 0; i < str.Length; i++)
-                {
-                    var v = list[first_index + i].Offset;
-                    list[first_index + i].Offset = new Vector2(v.x - total_width, v.y + offset_y + LineGap + offset.y);
-                }
-            }
-            else
-            {
-                for (int i = 0; i < str.Length; i++)
-                {
-                    var v = list[first_index + i].Offset;
-                    list[first_index + i].Offset = new Vector2(v.x, v.y + offset_y + LineGap + offset.y);
-                }
             }
             return new Vector2Int(total_width, height);
         }
@@ -89,13 +119,22 @@ namespace GameHUD
             mat = info.Mat;
             vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
             width = width == 0 ? info.Width : width;
-            float fL = 0.0f;
-            float fT = 0.0f;
-            float fR = width;
-            float fB = height == 0 ? info.Height : height;
+            height = height == 0 ? info.Height : height;
 
-
-
+            float fL = offset.x;
+            float fT = offset.y;
+            float fR = width + offset.x;
+            float fB = height + offset.y;
+            if (alignmentEnum.Equals(AlignmentEnum.Middle))
+            {
+                fL -= width / 2;
+                fR -= width / 2;
+            }
+            else if (alignmentEnum.Equals(AlignmentEnum.Right))
+            {
+                fL -= width;
+                fR -= width;
+            }
             vertex.vecRU.Set(fR, fT);  // 右上角
             vertex.vecRD.Set(fR, fB);  // 右下角
             vertex.vecLD.Set(fL, fB);  // 左下角
@@ -110,9 +149,8 @@ namespace GameHUD
             vertex.uvRD.Set(uvR, uvT);
             vertex.uvLD.Set(uvL, uvT);
             vertex.uvLU.Set(uvL, uvB);
-
             list.Add(vertex);
-            return new Vector2Int(info.Width, info.Height);
+            return new Vector2Int(width, height);
         }
         ///<summary>
         ///解析横竖向切割拉伸图填充
@@ -134,13 +172,21 @@ namespace GameHUD
             int xSliceLength = (int)(width * fillAmount);
             int ySliceLength = (int)(height * fillAmount);
 
-
             //每像素多少uv坐标点
             var xFactor = (info.xMax - info.xMin) / info.Width;
             var yFactor = (info.yMax - info.yMin) / info.Height;
             var list_count = list.size;
             // x y 轴 三段的像素长度
             int x_length0 = 0, x_length1 = 0, x_length2 = 0, y_length0 = 0, y_length1 = 0, y_length2 = 0;
+            var align_offset_x = 0;
+            if (alignmentEnum.Equals(AlignmentEnum.Middle))
+            {
+                align_offset_x = -width / 2;
+            }
+            else if (alignmentEnum.Equals(AlignmentEnum.Right))
+            {
+                align_offset_x = -width;
+            }
             if (slicetype == SliceTypeEnum.Horizontal)
             {
                 var uv1 = info.xMin + xFactor * slicevalue.Left;
@@ -156,9 +202,9 @@ namespace GameHUD
                             x_length2 = slicevalue.Right;
                         }
                     }
-                    SlicedFill(list[list_count - 3], x_length0, height, offset.x, offset.y, info.xMin, uv1, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 2], x_length1, height, offset.x + x_length0, offset.y, uv1, uv2, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 1], x_length2, height, offset.x + x_length0 + x_length1, offset.y, uv2, info.xMax, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 3], x_length0, height, align_offset_x + offset.x, offset.y, info.xMin, uv1, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 2], x_length1, height, align_offset_x + x_length0 + offset.x, offset.y, uv1, uv2, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 1], x_length2, height, align_offset_x + x_length0 + x_length1 + offset.x, offset.y, uv2, info.xMax, info.yMin, info.yMax);
                 }
                 else
                 {
@@ -171,9 +217,10 @@ namespace GameHUD
                             x_length0 = slicevalue.Left;
                         }
                     }
-                    SlicedFill(list[list_count - 3], x_length0, height, offset.x + width - xSliceLength, offset.y, info.xMin, uv1, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 2], x_length1, height, offset.x + width - xSliceLength + x_length0, offset.y, uv1, uv2, info.yMin, info.yMax);
-                    SlicedFill(list[list_count - 1], x_length2, height, offset.x + width - x_length2, offset.y, uv2, info.xMax, info.yMin, info.yMax);
+
+                    SlicedFill(list[list_count - 3], x_length0, height, align_offset_x + width - xSliceLength + offset.x, offset.y, info.xMin, uv1, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 2], x_length1, height, align_offset_x + width - xSliceLength + x_length0 + offset.x, offset.y, uv1, uv2, info.yMin, info.yMax);
+                    SlicedFill(list[list_count - 1], x_length2, height, align_offset_x + width - x_length2 + offset.x, offset.y, uv2, info.xMax, info.yMin, info.yMax);
                 }
 
             }
@@ -194,9 +241,9 @@ namespace GameHUD
                             y_length2 = (int)slicevalue.Top;
                         }
                     }
-                    SlicedFill(list[list_count - 3], width, y_length0, offset.x, offset.y, info.xMin, info.xMax, info.yMin, uv1);
-                    SlicedFill(list[list_count - 2], width, y_length1, offset.x, y_length0 + offset.y, info.xMin, info.xMax, uv1, uv2);
-                    SlicedFill(list[list_count - 1], width, y_length2, offset.x, ySliceLength - slicevalue.Top + offset.y, info.xMin, info.xMax, uv2, info.yMax);
+                    SlicedFill(list[list_count - 3], width, y_length0, align_offset_x + offset.x, offset.y, info.xMin, info.xMax, info.yMin, uv1);
+                    SlicedFill(list[list_count - 2], width, y_length1, align_offset_x + offset.x, y_length0 + offset.y, info.xMin, info.xMax, uv1, uv2);
+                    SlicedFill(list[list_count - 1], width, y_length2, align_offset_x + offset.x, offset.y + ySliceLength - slicevalue.Top, info.xMin, info.xMax, uv2, info.yMax);
                 }
                 else
                 {
@@ -210,9 +257,9 @@ namespace GameHUD
                             y_length0 = (int)slicevalue.Bottom;
                         }
                     }
-                    SlicedFill(list[list_count - 3], width, y_length0, offset.x + width, height - ySliceLength + offset.y, info.xMin, info.xMax, info.yMin, uv1);
-                    SlicedFill(list[list_count - 2], width, y_length1, offset.x + width, height - ySliceLength + y_length0 + offset.y, info.xMin, info.xMax, uv1, uv2);
-                    SlicedFill(list[list_count - 1], width, y_length2, offset.x + width, height - y_length2 + offset.y, info.xMin, info.xMax, uv2, info.yMax);
+                    SlicedFill(list[list_count - 3], width, y_length0, align_offset_x + offset.x + width, offset.y + height - ySliceLength, info.xMin, info.xMax, info.yMin, uv1);
+                    SlicedFill(list[list_count - 2], width, y_length1, align_offset_x + offset.x + width, offset.y + height - ySliceLength + y_length0, info.xMin, info.xMax, uv1, uv2);
+                    SlicedFill(list[list_count - 1], width, y_length2, align_offset_x + offset.x + width, offset.y + height - y_length2, info.xMin, info.xMax, uv2, info.yMax);
                 }
             }
 
@@ -237,26 +284,35 @@ namespace GameHUD
             var y_uv2 = yFactor * (info.Height - slicevalue.Top) + info.yMin;
 
             int size = list.size;
+            var align_offset_x = 0;
+            if (alignmentEnum.Equals(AlignmentEnum.Middle))
+            {
+                align_offset_x = -width / 2;
+            }
+            else if (alignmentEnum.Equals(AlignmentEnum.Right))
+            {
+                align_offset_x = -width;
+            }
             //下左
-            SlicedFill(list[size - 9], slicevalue.Left, slicevalue.Bottom, 0, 0, info.xMin, x_uv1, info.yMin, y_uv1);
+            SlicedFill(list[size - 9], slicevalue.Left, slicevalue.Bottom, offset.x + align_offset_x, offset.y, info.xMin, x_uv1, info.yMin, y_uv1);
             //下中
-            SlicedFill(list[size - 8], slice_width, slicevalue.Bottom, slicevalue.Left, 0, x_uv1, x_uv2, info.yMin, y_uv1);
+            SlicedFill(list[size - 8], slice_width, slicevalue.Bottom, slicevalue.Left + align_offset_x + offset.x, offset.y, x_uv1, x_uv2, info.yMin, y_uv1);
             //下右
-            SlicedFill(list[size - 7], slicevalue.Right, slicevalue.Bottom, width - slicevalue.Right, 0, x_uv2, info.xMax, info.yMin, y_uv1);
+            SlicedFill(list[size - 7], slicevalue.Right, slicevalue.Bottom, align_offset_x + width - slicevalue.Right + offset.x, offset.y, x_uv2, info.xMax, info.yMin, y_uv1);
 
             //中左
-            SlicedFill(list[size - 6], slicevalue.Left, slice_hight, 0, slicevalue.Bottom, info.xMin, x_uv1, y_uv1, y_uv2);
+            SlicedFill(list[size - 6], slicevalue.Left, slice_hight, align_offset_x + offset.x, slicevalue.Bottom + offset.y, info.xMin, x_uv1, y_uv1, y_uv2);
             //中中
-            SlicedFill(list[size - 5], slice_width, slice_hight, slicevalue.Left, slicevalue.Bottom, x_uv1, x_uv2, y_uv1, y_uv2);
+            SlicedFill(list[size - 5], slice_width, slice_hight, align_offset_x + slicevalue.Left + offset.x, slicevalue.Bottom + offset.y, x_uv1, x_uv2, y_uv1, y_uv2);
             //中右
-            SlicedFill(list[size - 4], slicevalue.Right, slice_hight, width - slicevalue.Right, slicevalue.Bottom, x_uv2, info.xMax, y_uv1, y_uv2);
+            SlicedFill(list[size - 4], slicevalue.Right, slice_hight, align_offset_x + width - slicevalue.Right + offset.x, slicevalue.Bottom + offset.y, x_uv2, info.xMax, y_uv1, y_uv2);
 
             //上左
-            SlicedFill(list[size - 3], slicevalue.Left, slicevalue.Top, 0, height - slicevalue.Top, info.xMin, x_uv1, y_uv2, info.yMax);
+            SlicedFill(list[size - 3], slicevalue.Left, slicevalue.Top, align_offset_x + offset.x, height - slicevalue.Top + offset.y, info.xMin, x_uv1, y_uv2, info.yMax);
             //上中
-            SlicedFill(list[size - 2], slice_width, slicevalue.Top, slicevalue.Left, height - slicevalue.Top, x_uv1, x_uv2, y_uv2, info.yMax);
+            SlicedFill(list[size - 2], slice_width, slicevalue.Top, align_offset_x + slicevalue.Left + offset.x, height - slicevalue.Top + offset.y, x_uv1, x_uv2, y_uv2, info.yMax);
             //上右
-            SlicedFill(list[size - 1], slicevalue.Right, slicevalue.Top, width - slicevalue.Right, height - slicevalue.Top, x_uv2, info.xMax, y_uv2, info.yMax);
+            SlicedFill(list[size - 1], slicevalue.Right, slicevalue.Top, align_offset_x + width - slicevalue.Right + offset.x, offset.y + height - slicevalue.Top, x_uv2, info.xMax, y_uv2, info.yMax);
             return new Vector2Int(width, height);
         }
 
