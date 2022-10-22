@@ -121,10 +121,10 @@ namespace GameHUD
             width = width == 0 ? info.Width : width;
             height = height == 0 ? info.Height : height;
 
-            float fL = offset.x;
-            float fT = offset.y;
-            float fR = width + offset.x;
-            float fB = height + offset.y;
+            float fL = 0;
+            float fT = 0;
+            float fR = width;
+            float fB = height;
             if (alignmentEnum.Equals(AlignmentEnum.Middle))
             {
                 fL -= width / 2;
@@ -149,7 +149,7 @@ namespace GameHUD
             vertex.uvRD.Set(uvR, uvT);
             vertex.uvLD.Set(uvL, uvT);
             vertex.uvLU.Set(uvL, uvB);
-            list.Add(vertex);
+            vertex.Offset=offset;
             return new Vector2Int(width, height);
         }
         ///<summary>

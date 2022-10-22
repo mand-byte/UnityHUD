@@ -18,9 +18,12 @@ namespace GameHUD
             _valid = true;
             IsSlice = false;
             this.alignmentEnum = alignmentEnum;
-            Rebuild();
+            var vertex = ObjectPool<HUDVertex>.Pop();
+            vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
+            m_SpriteVertex.Add(vertex);
             _offset = offset;
             _rolePos = rolepos;
+            Rebuild();
         }
 
         public void PushSliceSprite(string str, Vector3 rolepos, Vector2 offset, int width, int height, HUDVector4Int border, AlignmentEnum alignmentEnum)

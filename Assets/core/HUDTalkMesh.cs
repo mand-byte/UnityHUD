@@ -47,7 +47,11 @@ namespace GameHUD
             _max_vanishedtime = Config.TalkInfoArray[idx].VanishedTime;
             txt.PushText(str, chat_info.FontColor, chat_info.NameColorSD, _rolePos, Vector2.zero, chat_info.OutlineWidth, chat_info.FontSize, chat_info.CharGap, chat_info.LineGap, chat_info.Style, AlignmentEnum.Left, chat_info.MaxLineWidth);
             var sp_width = chat_info.ContentSliceValue.Left + txt.Size.x + chat_info.ContentSliceValue.Right;
+            var bg_min_width=chat_info.BGSliceValue.Left+chat_info.BGSliceValue.Right;
+            sp_width=Mathf.Max(sp_width,bg_min_width);
             var sp_height = chat_info.ContentSliceValue.Top + txt.Size.y + chat_info.ContentSliceValue.Bottom;
+            var bg_min_height=chat_info.BGSliceValue.Bottom+chat_info.BGSliceValue.Top;
+            sp_height=Mathf.Max(sp_height,bg_min_height);
             sprite.PushSliceSprite(chat_info.Sprite, _rolePos, _offset, sp_width, sp_height, chat_info.BGSliceValue, chat_info.ItemAlign);
 
             Dirty = true;

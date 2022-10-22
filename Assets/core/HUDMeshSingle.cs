@@ -218,11 +218,46 @@ namespace GameHUD
         // //更新缩放
         protected override void UpdateScale(float scale)
         {
-            for (int i = 0; i < mOffset.size; i++)
+            if (m_SpriteVertex.size == 0)
             {
-                mOffset[i] = mOffset[i] / this._Scale * scale;
+
+                return;
             }
             this._Scale = scale;
+            if (mesh == null)
+            {
+                //还未走 UpdateMesh 直接返回
+                return;
+            }
+            Vector2 vOffset = Vector2.zero;
+            mOffset.CleanPreWrite(mesh.vertexCount);
+            for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
+            {
+                HUDVertex v = m_SpriteVertex[i];
+                vOffset = v.vecRU;
+                vOffset.x *= scale;
+                vOffset.y *= scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
+
+                vOffset = v.vecRD;
+                vOffset.x *= scale;
+                vOffset.y *= scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
+
+                vOffset = v.vecLD;
+                vOffset.x *= scale;
+                vOffset.y *= scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
+
+                vOffset = v.vecLU;
+                vOffset.x *= scale;
+                vOffset.y *= scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
+            }
             if (mesh != null && mesh.vertexCount == mOffset.buffer.Length)
             {
                 mesh.uv2 = mOffset.buffer;
@@ -231,65 +266,50 @@ namespace GameHUD
         //更新因其他hud显示或隐藏 要改变此hud的偏移位置
         protected override void UpdateOffset(Vector2 off)
         {
-            if (m_SpriteVertex.size == 0)
+            if (m_SpriteVertex.size == 0 || mVerts.buffer == null)
+            {
+                return;
+            }
+            if (mesh == null)
             {
                 return;
             }
             var vOffset = Vector2.zero;
-            int last_index = m_SpriteVertex.size * 4;
-            if (mOffset.size != last_index)
+
+            mOffset.CleanPreWrite(mesh.vertexCount);
+            for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
-                for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
-                {
-                    HUDVertex v = m_SpriteVertex[i];
-                    v.Offset -= _offset;
-                    v.Offset += off;
-                }
+                HUDVertex v = m_SpriteVertex[i];
+                v.Offset -= _offset;
+                v.Offset += off;
+                vOffset = v.vecRU;
+                vOffset.x *= Scale;
+                vOffset.y *= Scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
+
+                vOffset = v.vecRD;
+                vOffset.x *= Scale;
+                vOffset.y *= Scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
+
+                vOffset = v.vecLD;
+                vOffset.x *= Scale;
+                vOffset.y *= Scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
+
+                vOffset = v.vecLU;
+                vOffset.x *= Scale;
+                vOffset.y *= Scale;
+                vOffset += v.Offset;
+                mOffset.Add(vOffset);
             }
-            else
+            if (mesh != null && mesh.vertexCount == mOffset.buffer.Length)
             {
-                for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
-                {
-                    HUDVertex v = m_SpriteVertex[i];
-                    v.Offset -= _offset;
-                    v.Offset += off;
-                    for (int j = 0; j < 4; j++)
-                    {
-                        vOffset = v.vecRU;
-                        vOffset.x *= Scale;
-                        vOffset.y *= Scale;
-                        vOffset += v.Offset;
-                        mOffset[i * 4] = vOffset;
-                        vOffset = v.vecRD;
-                        vOffset.x *= Scale;
-                        vOffset.y *= Scale;
-                        vOffset += v.Offset;
-                        mOffset[4 * i + 1] = vOffset;
-
-                        vOffset = v.vecLD;
-                        vOffset.x *= Scale;
-                        vOffset.y *= Scale;
-                        vOffset += v.Offset;
-                        mOffset[4 * i + 2] = vOffset;
-
-                        vOffset = v.vecLU;
-                        vOffset.x *= Scale;
-                        vOffset.y *= Scale;
-                        vOffset += v.Offset;
-                        mOffset[4 * i + 3] = vOffset;
-                    }
-                }
-
-                if (mOffset.buffer.Length > last_index)
-                {
-                    System.Array.Fill(mOffset.buffer, mOffset.buffer[last_index - 1], last_index, mOffset.buffer.Length - last_index);
-                }
-                if (mesh != null)
-                {
-                    mesh.uv2 = mOffset.buffer;
-                }
+                mesh.uv2 = mOffset.buffer;
             }
-
             _offset = off;
         }
         public override void RenderTo(CommandBuffer cmdBuffer)
