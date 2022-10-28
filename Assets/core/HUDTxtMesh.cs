@@ -44,13 +44,13 @@ namespace GameHUD
             var temp_offset = Vector2.zero;
             if (outlineWidth != 0)
             {
-                temp_offset.Set(outlineWidth, outlineWidth);
-                HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
                 temp_offset.Set(outlineWidth, 0);
                 HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
                 temp_offset.Set(-outlineWidth, 0);
                 HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
-                temp_offset.Set(-outlineWidth, outlineWidth);
+                temp_offset.Set(0, outlineWidth);
+                HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
+                temp_offset.Set(0, -outlineWidth);
                 HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
             }
             temp_offset = Vector2.zero;

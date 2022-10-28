@@ -5,43 +5,6 @@ namespace GameHUD
 {
     internal static class HUDStringParser
     {
-        public static Vector2Int GetStrOffsetByAlignment(string str, Vector2 input, ref Vector2 output, int size, int CharGap, int LineGap, FontStyle style, AlignmentEnum align, int widthlimit = 0)
-        {
-            var config = HUDManager.Instance.Config;
-            int total_width = 0;
-            int line = 0;
-            int temp_height = 0;
-            config.Font.RequestCharactersInTexture(str, size, style);
-            for (int i = 0; i < str.Length; i++)
-            {
-                if (config.Font.GetCharacterInfo(str[i], out var ch, size, style))
-                {
-                    if (temp_height < ch.glyphHeight)
-                    {
-                        temp_height = ch.glyphHeight;
-                    }
-                    var temp_width = total_width + ch.advance + CharGap;
-                    if (widthlimit > 0 && temp_width >= widthlimit)
-                    {
-                        line++;
-                        total_width = 0;
-                    }
-                    total_width += (ch.advance + CharGap);
-                }
-            }
-            total_width = widthlimit == 0 || line == 0 ? total_width - CharGap : widthlimit;
-            var height = (size + LineGap) * (line + 1);
-            if (align.Equals(AlignmentEnum.Right))
-            {
-                output = input - new Vector2(total_width, -line * (size + LineGap));
-            }
-            else if (align.Equals(AlignmentEnum.Middle))
-            {
-                output = input - new Vector2(total_width / 2, -line * (size + LineGap));
-            }
-            output = input;
-            return new Vector2Int(total_width, height);
-        }
         //解析文字
         public static Vector2Int ParseText(BetterList<HUDVertex> list, string str, Color32 color0, Color32 color1, Color32 color2, Color32 color3, Vector2 offset, int size, int CharGap, int LineGap, FontStyle style, AlignmentEnum align, int widthlimit = 0)
         {
