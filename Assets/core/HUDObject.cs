@@ -29,7 +29,7 @@ namespace GameHUD
                 var hud_mesh = _all_mesh[i];
                 if (hud_mesh != null && hud_mesh.IsValid)
                 {
-                    result = new Vector2(_role_offset.x, hud_mesh.Size.y + hud_mesh.ItemLineGap);
+                    result = new Vector2(_role_offset.x, hud_mesh.Size.y + hud_mesh.ItemLineGap+result.y);
                 }
             }
             return result;

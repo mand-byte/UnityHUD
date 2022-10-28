@@ -135,9 +135,6 @@ namespace GameHUD
         [Tooltip("气泡框对其方式")]
         public AlignmentEnum ItemAlign;
 
-        [Tooltip("气泡框偏移坐标,暂时无用,根据角色自身坐标偏移")]
-        public Vector2 Offset;
-
     }
     public class HUDConfigObject : ScriptableObject
     {

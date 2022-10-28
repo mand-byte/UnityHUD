@@ -47,7 +47,7 @@ namespace GameHUD
                 m_SpriteVertex.Add(vertex);
             }
             Rebuild();
-            Offset = uioffset;
+            Offset = uioffset+new Vector2(0,ItemLineGap);
             _RoleOffset = new Vector3(0, roleoffset.y, 0);
             _rolePos = rolepos;
         }

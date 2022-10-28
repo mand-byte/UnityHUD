@@ -31,7 +31,8 @@ namespace GameHUD
             }
             _rolePos = rolepos;
             _role_offset=roleoffset;
-            _uioffset=uisoffset+Config.TalkInfoArray[idx].Offset;
+            ItemLineGap=Config.TalkInfoArray[idx].ItemLineGap;
+            _uioffset=uisoffset+new Vector2(0,ItemLineGap);
             Rebuild();
 
         }
@@ -55,6 +56,7 @@ namespace GameHUD
             var sp_height = chat_info.ContentSliceValue.Top + txt.Size.y + chat_info.ContentSliceValue.Bottom;
             var bg_min_height=chat_info.BGSliceValue.Bottom+chat_info.BGSliceValue.Top;
             sp_height=Mathf.Max(sp_height,bg_min_height);
+            sprite.ItemLineGap=0;
             sprite.PushSliceSprite(chat_info.Sprite, _rolePos,_role_offset, _uioffset, sp_width, sp_height, chat_info.BGSliceValue, chat_info.ItemAlign);
 
             Dirty = true;

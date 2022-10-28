@@ -22,7 +22,7 @@ namespace GameHUD
         public Color32 clrRD;
         
         
-        public Vector2 Offset; // 本地偏移
+        public Vector2 Offset; // ui像素偏移
     }
 }
 
