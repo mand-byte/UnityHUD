@@ -33,6 +33,12 @@ namespace GameHUD
 
             }
         }
+        protected Vector3 _RoleOffset;
+        public Vector3 RoleOffset{
+            get{
+                return _RoleOffset;
+            }
+        }
         protected Vector3 _rolePos;
         public Vector3 RolePos
         {
@@ -122,6 +128,8 @@ namespace GameHUD
         public virtual void Release()
         {
             _valid = false;
+            ItemLineGap=0;
+            _RoleOffset=Vector3.zero;
         }
         public abstract void UpdateMesh();
 

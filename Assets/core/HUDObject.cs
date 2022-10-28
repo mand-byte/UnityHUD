@@ -7,7 +7,6 @@ namespace GameHUD
 
     sealed internal class HUDObject
     {
-        public static int OFFSETSCALE = 100;
         HUDConfigObject config;
         //存储头顶hud 
         HUDMesh[] _all_mesh = new HUDMesh[(int)HudComponentEnum.Total];
@@ -15,23 +14,22 @@ namespace GameHUD
         float _line;
         bool _init;
         Transform _trans;
-        //初始offset
-        Vector2 _offset;
+        //初始角色偏移
+        Vector2 _role_offset;
         HUDRelationEnum _relation, _guild_relation, _blood_relation;
         string _nick, _title, _guide, _icon;
         float _blood_percent;
 
-        //获取当前需要偏移的坐标
-        Vector2 GetLastComponentOffset(HudComponentEnum enume)
+        //获取当前需要偏移的高度
+        Vector2 GetComponentOffset(HudComponentEnum enume)
         {
-            var result = _offset;
+            var result = Vector2.zero;
             for (int i = (int)enume - 1; i >= 0; i--)
             {
                 var hud_mesh = _all_mesh[i];
                 if (hud_mesh != null && hud_mesh.IsValid)
                 {
-                    result.Set(hud_mesh.Offset.x, hud_mesh.Offset.y + hud_mesh.Size.y);
-                    break;
+                    result = new Vector2(_role_offset.x, hud_mesh.Size.y + hud_mesh.ItemLineGap);
                 }
             }
             return result;
@@ -52,7 +50,7 @@ namespace GameHUD
             }
             else
             {
-                var offset = GetLastComponentOffset(_type);
+                var offset = GetComponentOffset(_type);
                 if (_type.Equals(HudComponentEnum.GuildIcon))
                 {
                     BuildSprite(_type, name, offset);
@@ -103,7 +101,7 @@ namespace GameHUD
                     _all_mesh[(int)HudComponentEnum.Blood] = blood_mesh;
                 }
                 var blood = blood_mesh as HUDBloodMesh;
-                blood.Create(relationEnum, RolePos, _offset);
+                blood.Create(relationEnum, RolePos, _role_offset);
                 MeshHide(HudComponentEnum.Blood, false);
             }
             else
@@ -116,16 +114,18 @@ namespace GameHUD
 
             }
         }
+        //初始偏移
+
 
         public void Init(Transform trans, Vector2 offset)
         {
             _trans = trans;
-            _offset = offset * OFFSETSCALE;
+            _role_offset = offset ;
             config = HUDManager.Instance.Config;
             _init = true;
         }
 
-        void BuildText(HudComponentEnum enume, HUDRelationEnum relation, string str, Vector2 _offset)
+        void BuildText(HudComponentEnum enume, HUDRelationEnum relation, string str, Vector2 uiOffset)
         {
             var type_index = (int)enume;
             HUDTxtMesh text_mesh;
@@ -202,9 +202,9 @@ namespace GameHUD
                     ItemLineGap = config.GuildRelationDict[relation].ItemLineGap;
                     break;
             }
-            _offset.Set(_offset.x, _offset.y + ItemLineGap);
+
             text_mesh.ItemLineGap = ItemLineGap;
-            text_mesh.PushText(str, color, colorOutline, RolePos, _offset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
+            text_mesh.PushText(str, color, colorOutline, RolePos, _role_offset,uiOffset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
         }
         public void PushNumber(int number, HudNumberType type, Vector2 offset)
         {
@@ -234,9 +234,9 @@ namespace GameHUD
                     break;
                 }
             }
-            var v = GetLastComponentOffset(HudComponentEnum.GuildIcon);
+            var v = GetComponentOffset(HudComponentEnum.GuildIcon);
             var chat_mesh = ObjectPool<HUDTalkMesh>.Pop();
-            chat_mesh.PushTalk(idx, content, RolePos, v);
+            chat_mesh.PushTalk(idx, content, RolePos,_role_offset, v);
             _dynamical_mesh.Add(chat_mesh);
         }
         void BuildSprite(HudComponentEnum enume, string name, Vector2 _offset)
@@ -260,9 +260,8 @@ namespace GameHUD
                     sp_mesh.Release();
                 }
             }
-            _offset.Set(_offset.x, _offset.y + config.SpriteLineGap);
             sp_mesh.ItemLineGap = config.SpriteLineGap;
-            sp_mesh.PushSprite(name, RolePos, _offset, AlignmentEnum.Middle);
+            sp_mesh.PushSprite(name, RolePos, _role_offset,_offset, AlignmentEnum.Middle);
         }
         Vector3 RolePos = Vector3.zero;
 
@@ -308,7 +307,9 @@ namespace GameHUD
                         {
                             mesh.UpdateMesh();
                         }
-                        mesh.UpdateLogic();
+                         mesh.UpdateLogic();
+                        // var x = Camera.main.transform.eulerAngles.x;
+                        // mesh.Offset = _offset * Mathf.Cos(x * Mathf.Deg2Rad) + mesh.InitOffset;
                     }
                 }
                 for (int i = 0; i < _dynamical_mesh.size; i++)

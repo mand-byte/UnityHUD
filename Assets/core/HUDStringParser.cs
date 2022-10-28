@@ -76,10 +76,10 @@ namespace GameHUD
                         line++;
                         total_width = 0;
                     }
-                    float fL = ch.minX + total_width;
-                    float fT = ch.minY - line * (temp_height + LineGap);
-                    float fR = ch.maxX + total_width;
-                    float fB = ch.maxY - line * (temp_height + LineGap);
+                    float fL = ch.minX + total_width + offset.x;
+                    float fT = ch.minY - line * (temp_height + LineGap) + offset.y;
+                    float fR = ch.maxX + total_width + offset.x;
+                    float fB = ch.maxY - line * (temp_height + LineGap) + offset.y;
                     vertex.vecRU.Set(fR, fT);  // 右上角
                     vertex.vecRD.Set(fR, fB);  // 右下角
                     vertex.vecLD.Set(fL, fB);  // 左下角
@@ -96,15 +96,19 @@ namespace GameHUD
                 var vertex = list[Length - i];
                 if (align.Equals(AlignmentEnum.Right))
                 {
-                    vertex.Offset = offset - new Vector2(total_width, -line * (size + LineGap));
+                    var offset_ = new Vector2(total_width, -line * (size + LineGap));
+                    vertex.vecRU -= offset_;
+                    vertex.vecRD -= offset_;
+                    vertex.vecLD -= offset_;
+                    vertex.vecLU -= offset_;
                 }
                 else if (align.Equals(AlignmentEnum.Middle))
                 {
-                    vertex.Offset = offset - new Vector2(total_width / 2, -line * (size + LineGap));
-                }
-                else
-                {
-                    vertex.Offset = offset;
+                    var offset_ = new Vector2(total_width / 2, -line * (size + LineGap));
+                    vertex.vecRU -= offset_;
+                    vertex.vecRD -= offset_;
+                    vertex.vecLD -= offset_;
+                    vertex.vecLU -= offset_;
                 }
 
             }
@@ -149,7 +153,7 @@ namespace GameHUD
             vertex.uvRD.Set(uvR, uvT);
             vertex.uvLD.Set(uvL, uvT);
             vertex.uvLU.Set(uvL, uvB);
-            vertex.Offset=offset;
+            vertex.Offset = offset;
             return new Vector2Int(width, height);
         }
         ///<summary>

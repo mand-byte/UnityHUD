@@ -25,7 +25,7 @@ namespace GameHUD
         HUDNumberConfig numconfig;
         AnimationCurve cCurve, sCurve, pCurve;
         float _cur_time;
-        public void PushNumber(int number, HudNumberType type, Vector3 rolePos, Vector2 offset)
+        public void PushNumber(int number, HudNumberType type, Vector3 rolePos, Vector2 uioffset)
         {
             _valid = true;
             _FollowRole = false;
@@ -63,8 +63,8 @@ namespace GameHUD
             _cur_time = Time.realtimeSinceStartup;
 
             var mesh = ObjectPool<HUDNumberMeshBase>.Pop();
-            offset*=HUDObject.OFFSETSCALE;
-            _start_offset = offset;
+            uioffset*=HUDManager.PIXELS_PER_UNIT;
+            _start_offset = uioffset;
             Meshs.Add(mesh);
             mesh.PushNumber(number, type);
             mesh.RolePos = rolePos;
@@ -83,7 +83,7 @@ namespace GameHUD
             var c = cCurve.Evaluate(d);
             Meshs[0].mColor = new Color(1, 1, 1, c);
             var o = pCurve.Evaluate(d);
-            Meshs[0].Offset = _start_offset + new Vector2(0, o * HUDObject.OFFSETSCALE);
+            Meshs[0].Offset = _start_offset + new Vector2(0, o * HUDManager.PIXELS_PER_UNIT);
             var s = sCurve.Evaluate(d);
             Meshs[0].Scale = s;
 

@@ -8,7 +8,7 @@ namespace GameHUD
         string str; AlignmentEnum alignmentEnum;
         int width; int height; HUDVector4Int border;
         bool IsSlice;
-        public void PushSprite(string str, Vector3 rolepos, Vector2 offset, AlignmentEnum alignmentEnum)
+        public void PushSprite(string str, Vector3 rolepos, Vector2 roleoffset, Vector2 uioffset, AlignmentEnum alignmentEnum)
         {
             if (_valid)
             {
@@ -21,12 +21,13 @@ namespace GameHUD
             var vertex = ObjectPool<HUDVertex>.Pop();
             vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
             m_SpriteVertex.Add(vertex);
-            _offset = offset;
             _rolePos = rolepos;
+            _RoleOffset = new Vector3(0, roleoffset.y, 0);
             Rebuild();
+            Offset = uioffset+new Vector2(0,ItemLineGap);
         }
 
-        public void PushSliceSprite(string str, Vector3 rolepos, Vector2 offset, int width, int height, HUDVector4Int border, AlignmentEnum alignmentEnum)
+        public void PushSliceSprite(string str, Vector3 rolepos, Vector2 roleoffset, Vector2 uioffset, int width, int height, HUDVector4Int border, AlignmentEnum alignmentEnum)
         {
             if (_valid)
             {
@@ -45,19 +46,20 @@ namespace GameHUD
                 vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
                 m_SpriteVertex.Add(vertex);
             }
-            _offset = offset;
-            _rolePos = rolepos;
             Rebuild();
+            Offset = uioffset;
+            _RoleOffset = new Vector3(0, roleoffset.y, 0);
+            _rolePos = rolepos;
         }
         public override void Rebuild()
         {
             if (IsSlice)
             {
-                Size = HUDStringParser.PasreSlicedSprite(m_SpriteVertex, out mMat, str, _offset, width, height, border, alignmentEnum);
+                Size = HUDStringParser.PasreSlicedSprite(m_SpriteVertex, out mMat, str, Vector2.zero, width, height, border, alignmentEnum);
             }
             else
             {
-                Size = HUDStringParser.PasreSprite(m_SpriteVertex, out mMat, str, _offset, alignmentEnum);
+                Size = HUDStringParser.PasreSprite(m_SpriteVertex, out mMat, str, Vector2.zero, alignmentEnum);
             }
             Dirty = true;
         }

@@ -10,6 +10,7 @@ namespace GameHUD
 {
     public class HUDManager : MonoBehaviour
     {
+        public static readonly int PIXELS_PER_UNIT=100;
         BetterList<HUDInfo> _cache_info_list = new BetterList<HUDInfo>();
         private static HUDManager _instance;
         private HUDManager() { }

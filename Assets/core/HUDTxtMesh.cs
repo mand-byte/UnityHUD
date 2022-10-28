@@ -13,7 +13,7 @@ namespace GameHUD
         FontStyle style;
         int CharGap; int LineGap;
         AlignmentEnum alignment; int widthlimit = 0;
-        public void PushText(string str, List<Color32> color, Color32 outlineColor, Vector3 rolepos, Vector2 offset, float outlineWidth, int fontSize, int CharGap, int TxtLineGap, FontStyle style, AlignmentEnum alignment, int widthlimit = 0)
+        public void PushText(string str, List<Color32> color, Color32 outlineColor, Vector3 rolepos, Vector3 roleoffset,Vector2 uiOffset, float outlineWidth, int fontSize, int CharGap, int TxtLineGap, FontStyle style, AlignmentEnum alignment, int widthlimit = 0)
         {
             if (_valid)
             {
@@ -25,7 +25,6 @@ namespace GameHUD
             }
             _valid = true;
             this.str = str;
-            _offset = offset;
             this.outlineWidth = outlineWidth;
             this.outlineColor = outlineColor;
             this.color = color;
@@ -37,33 +36,35 @@ namespace GameHUD
             this.widthlimit = widthlimit;
             Rebuild();
             _rolePos = rolepos;
-
+            _RoleOffset=new Vector3(0,roleoffset.y,0);
+            Offset=uiOffset+new Vector2(0,ItemLineGap);
         }
         public override void Rebuild()
         {
+            var temp_offset = Vector2.zero;
             if (outlineWidth != 0)
             {
-                var temp_offset = _offset;
-                temp_offset.Set(_offset.x + outlineWidth, _offset.y + outlineWidth);
+                temp_offset.Set(outlineWidth, outlineWidth);
                 HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
-                temp_offset.Set(_offset.x + outlineWidth, _offset.y);
+                temp_offset.Set(outlineWidth, 0);
                 HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
-                temp_offset.Set(_offset.x - outlineWidth, _offset.y);
+                temp_offset.Set(-outlineWidth, 0);
                 HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
-                temp_offset.Set(_offset.x - outlineWidth, _offset.y + outlineWidth);
+                temp_offset.Set(-outlineWidth, outlineWidth);
                 HUDStringParser.ParseText(m_SpriteVertex, str, outlineColor, outlineColor, outlineColor, outlineColor, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
             }
+            temp_offset = Vector2.zero;
             if (color.Count == 1)
             {
-                Size = HUDStringParser.ParseText(m_SpriteVertex, str, color[0], color[0], color[0], color[0], _offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
+                Size = HUDStringParser.ParseText(m_SpriteVertex, str, color[0], color[0], color[0], color[0], temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
             }
             else if (color.Count == 4)
             {
-                Size = HUDStringParser.ParseText(m_SpriteVertex, str, color[0], color[1], color[2], color[3], _offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
+                Size = HUDStringParser.ParseText(m_SpriteVertex, str, color[0], color[1], color[2], color[3], temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
             }
             else
             {
-                Size = HUDStringParser.ParseText(m_SpriteVertex, str, Color.white, Color.white, Color.white, Color.white, _offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
+                Size = HUDStringParser.ParseText(m_SpriteVertex, str, Color.white, Color.white, Color.white, Color.white, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
             }
             Dirty = true;
         }

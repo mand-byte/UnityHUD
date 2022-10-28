@@ -8,7 +8,8 @@ namespace GameHUD
         public bool ReadyRecycle;
         float _cur_showtime = 0, _cur_vanishedtime = 0, _max_showtime = 0, _max_vanishedtime = 0;
         string str; int idx;
-        public void PushTalk(int idx, string content, Vector3 rolepos, Vector2 offset)
+        Vector2 _role_offset,_uioffset;
+        public void PushTalk(int idx, string content, Vector3 rolepos,Vector2 roleoffset, Vector2 uisoffset)
         {
             _FollowRole = true;
             if (_valid)
@@ -28,8 +29,9 @@ namespace GameHUD
                 Meshs.Add(sprite);
                 Meshs.Add(txt);
             }
-            _offset = offset+Config.TalkInfoArray[idx].Offset;
             _rolePos = rolepos;
+            _role_offset=roleoffset;
+            _uioffset=uisoffset+Config.TalkInfoArray[idx].Offset;
             Rebuild();
 
         }
@@ -45,14 +47,15 @@ namespace GameHUD
             var chat_info = Config.TalkInfoArray[idx];
             _max_showtime = Config.TalkInfoArray[idx].NormalShowTime;
             _max_vanishedtime = Config.TalkInfoArray[idx].VanishedTime;
-            txt.PushText(str, chat_info.FontColor, chat_info.NameColorSD, _rolePos, Vector2.zero, chat_info.OutlineWidth, chat_info.FontSize, chat_info.CharGap, chat_info.LineGap, chat_info.Style, AlignmentEnum.Left, chat_info.MaxLineWidth);
+            txt.ItemLineGap=0;
+            txt.PushText(str, chat_info.FontColor, chat_info.NameColorSD, _rolePos,_role_offset, Vector2.zero, chat_info.OutlineWidth, chat_info.FontSize, chat_info.CharGap, chat_info.LineGap, chat_info.Style, AlignmentEnum.Left, chat_info.MaxLineWidth);
             var sp_width = chat_info.ContentSliceValue.Left + txt.Size.x + chat_info.ContentSliceValue.Right;
             var bg_min_width=chat_info.BGSliceValue.Left+chat_info.BGSliceValue.Right;
             sp_width=Mathf.Max(sp_width,bg_min_width);
             var sp_height = chat_info.ContentSliceValue.Top + txt.Size.y + chat_info.ContentSliceValue.Bottom;
             var bg_min_height=chat_info.BGSliceValue.Bottom+chat_info.BGSliceValue.Top;
             sp_height=Mathf.Max(sp_height,bg_min_height);
-            sprite.PushSliceSprite(chat_info.Sprite, _rolePos, _offset, sp_width, sp_height, chat_info.BGSliceValue, chat_info.ItemAlign);
+            sprite.PushSliceSprite(chat_info.Sprite, _rolePos,_role_offset, _uioffset, sp_width, sp_height, chat_info.BGSliceValue, chat_info.ItemAlign);
 
             Dirty = true;
             if (chat_info.ItemAlign.Equals(AlignmentEnum.Middle))

@@ -47,21 +47,21 @@ Shader "Unlit/HUDFont"
 			sampler2D _MainTex;
 			uniform float4 _MainTex_ST;
 			//sampler2D_float _CameraDepthTexture;
-			float4 _Color;
+			
 			
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				float fScale = min(12.80 / _ScreenParams.x, 7.2 / _ScreenParams.y);
+				//float fScale = min(12.80 / _ScreenParams.x, 7.2 / _ScreenParams.y);
 				float2  uvOffset = v.uv2;// * fScale;
-				uvOffset.x *= fScale;
-				uvOffset.y *= fScale;
+				uvOffset.x *= 0.01;
+				uvOffset.y *= 0.01;
 				float3  right = UNITY_MATRIX_IT_MV[0].xyz;
 				float3  up = UNITY_MATRIX_IT_MV[1].xyz;
 				float3  vPos = v.vertex.xyz + uvOffset.x * right + uvOffset.y * up;
 				float4  vFinal = float4(vPos.xyz, 1.0);
 				o.vertex = UnityObjectToClipPos(vFinal);
-				o.color = v.color *_Color;
+				o.color = v.color;
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
 				return o;
 			}

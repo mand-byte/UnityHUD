@@ -37,6 +37,7 @@ namespace GameHUD
 
         public override void Release()
         {
+            base.Release();
             mVerts.Clear();
             mUvs.Clear();
             mCols.Clear();
@@ -105,14 +106,13 @@ namespace GameHUD
         {
             PrepareWrite(m_SpriteVertex.size * 4);
             Vector2 vOffset = Vector2.zero;
-            // Vector2 alignOffset = GetTxtAlign();
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
-                mVerts.Add(RolePos);
-                mVerts.Add(RolePos);
-                mVerts.Add(RolePos);
-                mVerts.Add(RolePos);
+                mVerts.Add(RolePos+RoleOffset);
+                mVerts.Add(RolePos+RoleOffset);
+                mVerts.Add(RolePos+RoleOffset);
+                mVerts.Add(RolePos+RoleOffset);
 
                 vOffset = v.vecRU;
                 vOffset.x *= Scale;
@@ -195,7 +195,7 @@ namespace GameHUD
         {
             for (int i = 0; i < mVerts.size; i++)
             {
-                mVerts[i] = role;
+                mVerts[i] = role+RoleOffset;
             }
             _rolePos = role;
             if (mesh != null && mesh.vertexCount == mVerts.buffer.Length)
@@ -266,17 +266,13 @@ namespace GameHUD
         //更新因其他hud显示或隐藏 要改变此hud的偏移位置
         protected override void UpdateOffset(Vector2 off)
         {
-            if (m_SpriteVertex.size == 0 || mVerts.buffer == null)
+            if (m_SpriteVertex.size == 0)
             {
                 return;
             }
-            if (mesh == null)
-            {
-                return;
-            }
+            
             var vOffset = Vector2.zero;
-
-            mOffset.CleanPreWrite(mesh.vertexCount);
+            mOffset.CleanPreWrite(m_SpriteVertex.size*4);
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
