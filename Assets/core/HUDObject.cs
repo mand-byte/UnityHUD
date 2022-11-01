@@ -29,7 +29,7 @@ namespace GameHUD
                 var hud_mesh = _all_mesh[i];
                 if (hud_mesh != null && hud_mesh.IsValid)
                 {
-                    result = new Vector2(_role_offset.x, hud_mesh.Size.y + hud_mesh.ItemLineGap+result.y);
+                    result = new Vector2(_role_offset.x, hud_mesh.Size.y + hud_mesh.ItemLineGap + result.y);
                 }
             }
             return result;
@@ -120,7 +120,7 @@ namespace GameHUD
         public void Init(Transform trans, Vector2 offset)
         {
             _trans = trans;
-            _role_offset = offset ;
+            _role_offset = offset;
             config = HUDManager.Instance.Config;
             _init = true;
         }
@@ -153,6 +153,7 @@ namespace GameHUD
             int LineGap = 0;
             AlignmentEnum Align = AlignmentEnum.Left;
             int ItemLineGap = 0;
+            HUDTXTInfoObject info = new HUDTXTInfoObject();
             switch (enume)
             {
                 case HudComponentEnum.Name:
@@ -161,15 +162,8 @@ namespace GameHUD
                         Debug.LogError("NameRelation 没有此配置 " + relation.ToString());
                         return;
                     }
-                    outlineWidth = config.NameRelationDict[relation].OutlineWidth;
-                    colorOutline = config.NameRelationDict[relation].NameColorSD;
-                    style = config.NameRelationDict[relation].Style;
-                    color = config.NameRelationDict[relation].NameColor;
-                    fontSize = config.NameRelationDict[relation].FontSize;
-                    CharGap = config.NameRelationDict[relation].CharGap;
-                    LineGap = config.NameRelationDict[relation].LineGap;
-                    Align = config.NameRelationDict[relation].Align;
-                    ItemLineGap = config.NameRelationDict[relation].ItemLineGap;
+                    info = config.NameRelationDict[relation];
+
                     break;
                 case HudComponentEnum.Title:
                     if (!config.TitleRelationDict.ContainsKey(relation))
@@ -177,13 +171,7 @@ namespace GameHUD
                         Debug.LogError("TitleRelation 没有此配置 " + relation.ToString());
                         return;
                     }
-                    color = config.TitleRelationDict[relation].NameColor;
-                    outlineWidth = config.TitleRelationDict[relation].OutlineWidth;
-                    colorOutline = config.TitleRelationDict[relation].NameColorSD;
-                    style = config.TitleRelationDict[relation].Style;
-                    fontSize = config.TitleRelationDict[relation].FontSize;
-                    Align = config.TitleRelationDict[relation].Align;
-                    ItemLineGap = config.TitleRelationDict[relation].ItemLineGap;
+                    info = config.TitleRelationDict[relation];
                     break;
                 case HudComponentEnum.GuildName:
                     if (!config.GuildRelationDict.ContainsKey(relation))
@@ -191,20 +179,21 @@ namespace GameHUD
                         Debug.LogError("GuildRelation 没有此配置 " + relation.ToString());
                         return;
                     }
-                    outlineWidth = config.GuildRelationDict[relation].OutlineWidth;
-                    colorOutline = config.GuildRelationDict[relation].NameColorSD;
-                    style = config.GuildRelationDict[relation].Style;
-                    color = config.GuildRelationDict[relation].NameColor;
-                    fontSize = config.GuildRelationDict[relation].FontSize;
-                    CharGap = config.GuildRelationDict[relation].CharGap;
-                    LineGap = config.GuildRelationDict[relation].LineGap;
-                    Align = config.GuildRelationDict[relation].Align;
-                    ItemLineGap = config.GuildRelationDict[relation].ItemLineGap;
+                    info = config.GuildRelationDict[relation];
                     break;
             }
+            outlineWidth = info.OutlineWidth;
+            colorOutline = info.NameColorSD;
+            style = info.Style;
+            color = info.NameColor;
+            fontSize = info.FontSize;
+            CharGap = info.CharGap;
+            LineGap = info.LineGap;
+            Align = info.Align;
+            ItemLineGap = info.ItemLineGap;
 
             text_mesh.ItemLineGap = ItemLineGap;
-            text_mesh.PushText(str, color, colorOutline, RolePos, _role_offset,uiOffset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
+            text_mesh.PushText(str, color, colorOutline, RolePos, _role_offset, uiOffset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
         }
         public void PushNumber(int number, HudNumberType type, Vector2 offset)
         {
@@ -236,7 +225,7 @@ namespace GameHUD
             }
             var v = GetComponentOffset(HudComponentEnum.GuildIcon);
             var chat_mesh = ObjectPool<HUDTalkMesh>.Pop();
-            chat_mesh.PushTalk(idx, content, RolePos,_role_offset, v);
+            chat_mesh.PushTalk(idx, content, RolePos, _role_offset, v);
             _dynamical_mesh.Add(chat_mesh);
         }
         void BuildSprite(HudComponentEnum enume, string name, Vector2 _offset)
@@ -261,7 +250,7 @@ namespace GameHUD
                 }
             }
             sp_mesh.ItemLineGap = config.SpriteLineGap;
-            sp_mesh.PushSprite(name, RolePos, _role_offset,_offset, AlignmentEnum.Middle);
+            sp_mesh.PushSprite(name, RolePos, _role_offset, _offset, AlignmentEnum.Middle);
         }
         Vector3 RolePos = Vector3.zero;
 
@@ -307,7 +296,7 @@ namespace GameHUD
                         {
                             mesh.UpdateMesh();
                         }
-                         mesh.UpdateLogic();
+                        mesh.UpdateLogic();
                         // var x = Camera.main.transform.eulerAngles.x;
                         // mesh.Offset = _offset * Mathf.Cos(x * Mathf.Deg2Rad) + mesh.InitOffset;
                     }
