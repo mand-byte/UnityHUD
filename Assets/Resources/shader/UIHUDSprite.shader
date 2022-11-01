@@ -7,7 +7,7 @@ Shader "Unlit/HUDSprite"
 		_MainTex ("Alpha (A)", 2D) = "white" {}
 		_MainAlpha("MainAlpha (A)", 2D) = "white" {}
 		_Color("Main Color", Color) = (1,1,1,1)
-		
+		_UnitPerPixel ("Unit Per Pixel", Float) = 0.01
 	}
 	SubShader
 	{
@@ -51,13 +51,11 @@ Shader "Unlit/HUDSprite"
 			sampler2D _MainTex;
 			sampler2D _MainAlpha;
 			uniform float4 _MainTex_ST;
+			float _UnitPerPixel;
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				// float fScale = min(12.8 / _ScreenParams.x, 7.2 / _ScreenParams.y);
-				 float2  uvOffset = v.uv2;// * fScale;
-				uvOffset.x *= 0.01;
-				uvOffset.y *= 0.01;
+				float2  uvOffset = v.uv2*_UnitPerPixel;
 				float3  right = UNITY_MATRIX_IT_MV[0].xyz;
 				float3  up = UNITY_MATRIX_IT_MV[1].xyz;
 				float3  vPos = v.vertex.xyz + uvOffset.x * right + uvOffset.y * up;

@@ -4,6 +4,7 @@ Shader "Unlit/HUDFont"
 	{
 		_MainTex ("Alpha (A)", 2D) = "white" {}
 		_Color("Main Color", Color) = (1,1,1,1)
+		_UnitPerPixel ("Unit Per Pixel", Float) = 0.01
 	}
 	SubShader
 	{
@@ -47,15 +48,11 @@ Shader "Unlit/HUDFont"
 			sampler2D _MainTex;
 			uniform float4 _MainTex_ST;
 			//sampler2D_float _CameraDepthTexture;
-			
-			
+			float _UnitPerPixel;
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				//float fScale = min(12.80 / _ScreenParams.x, 7.2 / _ScreenParams.y);
-				float2  uvOffset = v.uv2;// * fScale;
-				uvOffset.x *= 0.01;
-				uvOffset.y *= 0.01;
+				float2  uvOffset = v.uv2*_UnitPerPixel;
 				float3  right = UNITY_MATRIX_IT_MV[0].xyz;
 				float3  up = UNITY_MATRIX_IT_MV[1].xyz;
 				float3  vPos = v.vertex.xyz + uvOffset.x * right + uvOffset.y * up;

@@ -70,7 +70,7 @@ namespace GameHUD
                 var combintex = AssetImporter.GetAtPath(dir) as TextureImporter;
                 combintex.textureType = TextureImporterType.Sprite;
                 combintex.mipmapEnabled = true;
-                combintex.spritePixelsPerUnit = 1;
+                combintex.spritePixelsPerUnit=HUDManager.PIXELS_PER_UNIT;
                 combintex.SaveAndReimport();
 
                 var info = new SpriteInfo[list.Count];

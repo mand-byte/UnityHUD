@@ -157,6 +157,7 @@ namespace GameHUD
                 var tex = _configObject.Atlas[i];
                 var m_mat = new Material(Shader.Find("Unlit/HUDSprite"));
                 m_mat.SetTexture("_MainTex", _configObject.Atlas[i]);
+                m_mat.SetFloat("_UnitPerPixel",1f/PIXELS_PER_UNIT);
                 for (int j = 0; j < atlas.Length; j++)
                 {
                     atlas[j].Mat = m_mat;
@@ -191,6 +192,7 @@ namespace GameHUD
             var sh = Shader.Find("Unlit/HUDFont");
             var _font_mat = new Material(sh);
             _mats.Add(_font_mat);
+            _font_mat.SetFloat("_UnitPerPixel",1f/PIXELS_PER_UNIT);
             _font_mat.mainTexture = _configObject.Font.material.mainTexture;
             _font_mat.mainTextureOffset = _configObject.Font.material.mainTextureOffset;
             _font_mat.mainTextureScale = _configObject.Font.material.mainTextureScale;
