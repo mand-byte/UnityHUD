@@ -197,7 +197,7 @@ namespace GameHUD
         }
         public void PushNumber(int number, int type, Vector2 offset)
         {
-            if (config.NumberTypes.Count>=type)
+            if (config.NumberTypes.Count<=type)
             {
                 return;
             }
@@ -297,8 +297,6 @@ namespace GameHUD
                             mesh.UpdateMesh();
                         }
                         mesh.UpdateLogic();
-                        // var x = Camera.main.transform.eulerAngles.x;
-                        // mesh.Offset = _offset * Mathf.Cos(x * Mathf.Deg2Rad) + mesh.InitOffset;
                     }
                 }
                 for (int i = 0; i < _dynamical_mesh.size; i++)

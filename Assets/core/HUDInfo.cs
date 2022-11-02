@@ -18,11 +18,19 @@ namespace GameHUD
             init = true;
             Object.Init(trans, offset);
         }
-        public void UpdateHudInfo(HudComponentEnum comptype, string str, HUDRelationEnum relationtype = HUDRelationEnum.Self)
+        ///<summary>
+        ///更新头顶ui信息
+        ///</summary>
+        ///<param name="styleIndex">样式索引</param>
+        public void UpdateHudInfo(HudComponentEnum comptype, string str, HUDRelationEnum styleIndex = HUDRelationEnum.Self)
         {
             if (!init) return;
-            Object.UpdateHudInfo(comptype, str, relationtype);
+            Object.UpdateHudInfo(comptype, str, styleIndex);
         }
+        ///<summary>
+        ///聊天气泡框
+        ///</summary>
+        ///<param name="talkStyleIdx">气泡框样式索引</param>
         public void Talk(ushort talkStyleIdx, string str)
         {
             if (!init) return;
@@ -39,15 +47,21 @@ namespace GameHUD
         ///<summary>
         ///是否显示血条
         ///</summary>
-        public void BloodVisable(bool show, HUDRelationEnum relationtype)
+        ///<param name="styleIndex">血条样式索引</param>
+        public void BloodVisable(bool show, HUDRelationEnum styleIndex)
         {
             if (!init) return;
-            Object.BloodVisable(show, relationtype);
+            Object.BloodVisable(show, styleIndex);
         }
-        public void HurtNumber(int type, int number, Vector2 offset)
+        ///<summary>
+        ///飘字
+        ///</summary>
+        ///<param name="styleIndex">飘字样式索引</param>
+        ///<param name="offset">偏移值</param>
+        public void HurtNumber(int styleIndex, int number, Vector2 offset)
         {
             if (!init) return;
-            Object.PushNumber(number, type, offset);
+            Object.PushNumber(number, styleIndex, offset);
         }
 
         public void Release()

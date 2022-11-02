@@ -9,6 +9,9 @@ namespace GameHUD
         GuildIcon,
         Total,
     }
+    ///<summary>
+    ///HUD样式类型,请当int来用,不要把字面意思当成实际意思.
+    ///</summary>
     public enum HUDRelationEnum
     {
         Self,
