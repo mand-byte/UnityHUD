@@ -16,7 +16,7 @@ MonoBehaviour:
   - {fileID: 2800000, guid: a9728d54702da574fa16d0d899f9619c, type: 3}
   AtlasData:
   - {fileID: 4900000, guid: ac2816be2adbc3b44abee9fe0701652a, type: 3}
-  Font: {fileID: 12800000, guid: afd6a44728654ba438cef299521471a8, type: 3}
+  Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
   SpriteGap: 2
   SpriteLineGap: 0
   NameRelationArray:
@@ -386,8 +386,7 @@ MonoBehaviour:
     ItemLineGap: 20
     ItemAlign: 1
   NumberTypes:
-  - Type: 0
-    Sign: 0
+  - Sign: 0
     Perfixe: 98
     MoveCurve:
       serializedVersion: 2
@@ -499,8 +498,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     NumbersGap: 2
     NumbersAlign: 1
-  - Type: 1
-    Sign: 1
+  - Sign: 1
     Perfixe: 99
     MoveCurve:
       serializedVersion: 2
@@ -612,8 +610,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     NumbersGap: 8
     NumbersAlign: 1
-  - Type: 2
-    Sign: 1
+  - Sign: 1
     Perfixe: 108
     MoveCurve:
       serializedVersion: 2
@@ -725,8 +722,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     NumbersGap: 2
     NumbersAlign: 1
-  - Type: 3
-    Sign: 1
+  - Sign: 1
     Perfixe: 104
     MoveCurve:
       serializedVersion: 2
