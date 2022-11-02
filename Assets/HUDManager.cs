@@ -127,13 +127,6 @@ namespace GameHUD
                     var info = _configObject.TitleInfoArray[i];
                     _configObject.TitleRelationDict[info.Relation] = info;
                 }
-            _configObject.NumberTypeDict.Clear();
-            if (_configObject.NumberTypes != null)
-                for (int i = 0; i < _configObject.NumberTypes.Count; i++)
-                {
-                    var info = _configObject.NumberTypes[i];
-                    _configObject.NumberTypeDict[config.NumberTypes[i].Type] = config.NumberTypes[i];
-                }
             ForceRefresh = true;
         }
         // ///<summary>

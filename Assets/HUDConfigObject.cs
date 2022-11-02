@@ -19,8 +19,6 @@ namespace GameHUD
     [System.Serializable]
     public struct HUDNumberConfig
     {
-        [Tooltip("数字类型"),Header("类型")]
-        public HudNumberType Type;
         [Tooltip("是否带正负符号"),Header("是否带符号")]
         public bool Sign;
         [Tooltip("数字前缀"),Header("数字前缀")]
@@ -174,11 +172,6 @@ namespace GameHUD
 
         [Tooltip("飘字配置"),Header("飘字配置")]
         public List<HUDNumberConfig> NumberTypes;
-        [HideInInspector, System.NonSerialized]
-        public Dictionary<HudNumberType, HUDNumberConfig> NumberTypeDict = new Dictionary<HudNumberType, HUDNumberConfig>();
-
-
-
 
     }
 }

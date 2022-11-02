@@ -250,7 +250,7 @@ namespace GameHUD
                             r.InitState((uint)System.Guid.NewGuid().GetHashCode());
                             var x = r.NextFloat(-3f, 3f);
                             var pos = new Vector2(x, 0);
-                            hud.HurtNumber((HudNumberType)_number_type, _hurt_number, pos);
+                            hud.HurtNumber(_number_type, _hurt_number, pos);
                         }
 
 

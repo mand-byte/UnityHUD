@@ -10,10 +10,10 @@ namespace GameHUD
     {
         private class HUDNumberMeshBase : HUDMeshSingle
         {
-            public void PushNumber(int number, HudNumberType type)
+            public void PushNumber(int number, int type)
             {
 
-                HUDNumberConfig numconfig = Config.NumberTypeDict[type];
+                HUDNumberConfig numconfig = Config.NumberTypes[type];
                 Size = HUDStringParser.PasrseNumber(m_SpriteVertex, out mMat, numconfig.Perfixe, numconfig.NumbersGap, number, numconfig.Sign, numconfig.NumbersAlign);
                 _valid = true;
                 Dirty = true;
@@ -25,12 +25,12 @@ namespace GameHUD
         HUDNumberConfig numconfig;
         AnimationCurve cCurve, sCurve, pCurve;
         float _cur_time;
-        public void PushNumber(int number, HudNumberType type, Vector3 rolePos, Vector2 uioffset)
+        public void PushNumber(int number, int type, Vector3 rolePos, Vector2 uioffset)
         {
             _valid = true;
             _FollowRole = false;
             Dirty=true;
-            numconfig = Config.NumberTypeDict[type];
+            numconfig = Config.NumberTypes[type];
             cCurve = numconfig.ColorCurve;
             sCurve = numconfig.ScaleCurve;
             pCurve = numconfig.MoveCurve;

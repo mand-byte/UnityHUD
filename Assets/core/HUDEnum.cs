@@ -37,10 +37,3 @@ namespace GameHUD
         HorizontalAndVertical,
     }
 }
-public enum HudNumberType
-{
-    NormalHurt,
-    NormalHeal,
-    CritHurt,
-    CritHeal,
-}

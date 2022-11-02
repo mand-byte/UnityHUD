@@ -195,9 +195,9 @@ namespace GameHUD
             text_mesh.ItemLineGap = ItemLineGap;
             text_mesh.PushText(str, color, colorOutline, RolePos, _role_offset, uiOffset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
         }
-        public void PushNumber(int number, HudNumberType type, Vector2 offset)
+        public void PushNumber(int number, int type, Vector2 offset)
         {
-            if (!config.NumberTypeDict.ContainsKey(type))
+            if (config.NumberTypes.Count>=type)
             {
                 return;
             }
