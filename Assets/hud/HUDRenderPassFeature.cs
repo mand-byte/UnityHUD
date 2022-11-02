@@ -29,8 +29,8 @@ namespace GameHUD
                 if (CmdBuffer != null && CmdBuffer.sizeInBytes > 0)
                 {
                     context.ExecuteCommandBuffer(CmdBuffer);
-                    HUDManager.Instance.Dirty = true;
                 }
+                HUDManager.Instance.Dirty = true;
             }
 
             // Cleanup any allocated resources that were created during the execution of this render pass.
