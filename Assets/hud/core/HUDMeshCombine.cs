@@ -100,5 +100,15 @@ namespace GameHUD
                 }
             }
         }
+        public override void Rebuild()
+        {
+           if (_meshs != null)
+            {
+                for (int i = 0; i < _meshs.size; i++)
+                {
+                    _meshs[i].Rebuild();
+                }
+            }
+        }
     }
 }

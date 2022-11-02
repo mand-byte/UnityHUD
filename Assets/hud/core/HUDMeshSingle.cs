@@ -99,8 +99,8 @@ namespace GameHUD
             mesh.uv2 = mOffset.buffer;
             mesh.colors32 = mCols.buffer;
             mesh.triangles = mIndices.buffer;
-            HUDManager.Instance.Dirty = true;
-            Dirty = false;
+            //HUDManager.Instance.Dirty = true;
+            //Dirty = false;
         }
         void FillVertex()
         {

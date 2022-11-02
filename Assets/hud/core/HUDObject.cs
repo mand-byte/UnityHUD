@@ -289,6 +289,14 @@ namespace GameHUD
                     {
                         hud_mesh.Rebuild();
                     }
+                    for (int i = 0; i < _dynamical_mesh.size; i++)
+                    {
+                        var mesh = _dynamical_mesh[i];
+                        if (mesh != null && mesh.IsValid)
+                        {
+                            mesh.Rebuild();
+                        }
+                    }
                 }
                 CheckPosChange();
                 for (int i = 0; i < _all_mesh.Length; i++)
