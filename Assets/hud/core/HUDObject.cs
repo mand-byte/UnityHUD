@@ -11,14 +11,11 @@ namespace GameHUD
         //存储头顶hud 
         HUDMesh[] _all_mesh = new HUDMesh[(int)HudComponentEnum.Total];
         BetterList<HUDMesh> _dynamical_mesh = new BetterList<HUDMesh>();
-        float _line;
         bool _init;
         Transform _trans;
         //初始角色偏移
         Vector2 _role_offset;
-        HUDRelationEnum _relation, _guild_relation, _blood_relation;
-        string _nick, _title, _guide, _icon;
-        float _blood_percent;
+
 
         //获取当前需要偏移的高度
         Vector2 GetComponentOffset(HudComponentEnum enume)
@@ -39,17 +36,19 @@ namespace GameHUD
         public void UpdateHudInfo(HudComponentEnum _type, string name, HUDRelationEnum relationEnum)
         {
 
-            if (string.IsNullOrEmpty(name) && _all_mesh[(int)_type] == null)
-            {
-                return;
-            }
-            else if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
                 //如果原先有,现在没有
                 MeshHide(_type);
             }
             else
             {
+                var mesh = _all_mesh[(int)_type];
+                var isshow = false;
+                if (mesh != null && mesh.IsValid)
+                {
+                    isshow = true;
+                }
                 var offset = GetComponentOffset(_type);
                 if (_type.Equals(HudComponentEnum.GuildIcon))
                 {
@@ -59,25 +58,8 @@ namespace GameHUD
                 {
                     BuildText(_type, relationEnum, name, offset);
                 }
-                MeshHide(_type, false);
-            }
-
-            switch (_type)
-            {
-                case HudComponentEnum.Name:
-                    _nick = name;
-                    _relation = relationEnum;
-                    break;
-                case HudComponentEnum.Title:
-                    _title = name;
-                    break;
-                case HudComponentEnum.GuildName:
-                    _guide = name;
-                    _guild_relation = relationEnum;
-                    break;
-                case HudComponentEnum.GuildIcon:
-                    _icon = name;
-                    break;
+                if (!isshow)
+                    MeshHide(_type, false);
             }
         }
         public void UpdateBloodPercent(float percent)
@@ -105,8 +87,14 @@ namespace GameHUD
                     blood_mesh = ObjectPool<HUDBloodMesh>.Pop();
                     _all_mesh[(int)HudComponentEnum.Blood] = blood_mesh;
                 }
+                var isshow=false;
+                if (blood_mesh.IsValid)
+                {
+                    isshow=true;
+                }
                 var blood = blood_mesh as HUDBloodMesh;
                 blood.Create(config.BloodRelationArray[(int)relationEnum], RolePos, _role_offset);
+                if(!isshow)
                 MeshHide(HudComponentEnum.Blood, false);
             }
             else
@@ -313,7 +301,7 @@ namespace GameHUD
                     var mesh = _dynamical_mesh[i];
                     if (mesh != null && mesh.IsValid)
                     {
-                        
+
                         mesh.UpdateLogic();
                     }
                 }
@@ -394,20 +382,27 @@ namespace GameHUD
         {
             //计算当前组件size
             var select_mesh = _all_mesh[(int)enume];
+            if (select_mesh == null)
+            {
+                return;
+            }
             var size = select_mesh.Size;
             var select_linegap = select_mesh.ItemLineGap;
             size.Set(size.x, size.y + select_linegap);
-            int i = isHide ? (int)enume : (int)enume + 1;
-            for (; i < _all_mesh.Length; i++)
+            for (int i = (int)enume + 1; i < _all_mesh.Length; i++)
             {
                 var mesh = _all_mesh[i];
                 if (mesh != null && mesh.IsValid)
                 {
                     var offset = mesh.Offset;
                     if (isHide)
+                    {
                         offset.Set(offset.x, offset.y - size.y);
+                    }
                     else
+                    {
                         offset.Set(offset.x, offset.y + size.y);
+                    }
                     mesh.Offset = offset;
                 }
             }

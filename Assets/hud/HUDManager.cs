@@ -12,7 +12,7 @@ namespace GameHUD
     {
         public static readonly int PIXELS_PER_UNIT = 100;
         BetterList<HUDInfo> _cache_info_list = new BetterList<HUDInfo>();
-        List<MeshData> _all_meshdata = new List<MeshData>();
+        List<MeshData> _all_meshdata = new List<MeshData>(4);
         private static HUDManager _instance;
         private HUDManager() { }
         public static HUDManager Instance => _instance;
@@ -209,7 +209,7 @@ namespace GameHUD
         }
         void OnFontTextureChange(Font f)
         {
-            if (f.name.Equals(Config.Font.name))
+            if (Config && Config.Font && f.name.Equals(Config.Font.name))
             {
                 ForceRefresh = true;
             }

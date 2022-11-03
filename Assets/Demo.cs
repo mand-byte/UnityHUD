@@ -96,7 +96,7 @@ namespace GameHUD
                             {
                                 _guide = new_str.newValue;
                                 var t = child as TextField;
-                                t.value = _name;
+                                t.value = _guide;
                             });
                         }
                         else if (child.name == "type")

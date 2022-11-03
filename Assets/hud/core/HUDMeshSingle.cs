@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 
 namespace GameHUD
 {
-    internal class MeshData
+    internal class MeshData : System.IDisposable
     {
         public MeshData()
         {
@@ -13,34 +13,46 @@ namespace GameHUD
             mMesh.hideFlags = HideFlags.DontSave;
             mMesh.name = "hud_mesh";
             mMesh.MarkDynamic();
-            mMesh.vertices = mVerts.buffer;
-            mMesh.uv = mUvs.buffer;
-            mMesh.uv2 = mOffset.buffer;
-            mMesh.colors32 = mCols.buffer;
-            mMesh.triangles = mIndices.buffer;
             mMesh.Optimize();
+            mVerts = new BetterList<Vector3>();
+            mOffset = new BetterList<Vector2>();
+            mUvs = new BetterList<Vector2>();
+            mCols = new BetterList<Color32>();
+            mIndices = new BetterList<int>();
         }
+        public BetterList<Vector3> mVerts;
+        //ui偏移
+        public BetterList<Vector2> mOffset;
+        public BetterList<Vector2> mUvs;
+        public BetterList<Color32> mCols;
+        public BetterList<int> mIndices;
         public Material mMat;
         public Mesh mMesh;
-        public BetterList<Vector3> mVerts = new BetterList<Vector3>();
-        //ui偏移
-        public BetterList<Vector2> mOffset = new BetterList<Vector2>();
-        public BetterList<Vector2> mUvs = new BetterList<Vector2>();
-        public BetterList<Color32> mCols = new BetterList<Color32>();
-        public BetterList<int> mIndices = new BetterList<int>();
         public void Clear()
         {
+            mMesh.Clear();
             mVerts.Clear();
             mUvs.Clear();
             mCols.Clear();
             mIndices.Clear();
             mOffset.Clear();
         }
+        public void Dispose()
+        {
+            Object.Destroy(mMesh);
+            mMesh = null;
+            mMat = null;
+            mVerts = null;
+            mOffset = null;
+            mUvs = null;
+            mCols = null;
+            mIndices = null;
+        }
     }
     internal class HUDMeshSingle : HUDMesh
     {
- 
-              protected BetterList<HUDVertex> m_SpriteVertex = new BetterList<HUDVertex>();
+
+        protected BetterList<HUDVertex> m_SpriteVertex = new BetterList<HUDVertex>();
 
         public override void Release()
         {
@@ -54,7 +66,7 @@ namespace GameHUD
             m_SpriteVertex.Clear();
             _valid = false;
         }
-      
+
         //更新角色世界坐标
         protected override void UpdatePos(Vector3 role)
         {
@@ -69,7 +81,7 @@ namespace GameHUD
                 m_SpriteVertex[i].clrRD = c;
                 m_SpriteVertex[i].clrRU = c;
             }
-            
+
         }
         // //更新缩放
         protected override void UpdateScale(float scale)
@@ -79,7 +91,7 @@ namespace GameHUD
         //更新因其他hud显示或隐藏 要改变此hud的偏移位置
         protected override void UpdateOffset(Vector2 off)
         {
-           
+
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
@@ -88,7 +100,7 @@ namespace GameHUD
             }
             _offset = off;
         }
-      
+
         public override void FillMeshData(List<MeshData> meshDatas)
         {
             var data = meshDatas[MaterialIndex];
