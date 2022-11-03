@@ -8,15 +8,22 @@ namespace GameHUD
     {
         internal long id;
         internal HUDObject Object;
+        private Transform _trans;
+        public Transform Trans => _trans;
         bool init = false;
         public HUDInfo()
         {
 
         }
+        public bool IsInited=>init;
         public void Init(Transform trans, Vector2 offset)
         {
-            init = true;
-            Object.Init(trans, offset);
+            if (!init)
+            {
+                init = true;
+                _trans = trans;
+                Object.Init(trans, offset);
+            }
         }
         ///<summary>
         ///更新头顶ui信息

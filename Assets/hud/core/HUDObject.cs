@@ -9,7 +9,7 @@ namespace GameHUD
     {
         HUDConfigObject config;
         //存储头顶hud 
-        HUDMesh[] _all_mesh = new HUDMesh[(int)HudComponentEnum.Total];
+        HUDMesh[] _base_hud_mesh = new HUDMesh[(int)HudComponentEnum.Total];
         BetterList<HUDMesh> _dynamical_mesh = new BetterList<HUDMesh>();
         bool _init;
         Transform _trans;
@@ -23,7 +23,7 @@ namespace GameHUD
             var result = Vector2.zero;
             for (int i = (int)enume - 1; i >= 0; i--)
             {
-                var hud_mesh = _all_mesh[i];
+                var hud_mesh = _base_hud_mesh[i];
                 if (hud_mesh != null && hud_mesh.IsValid)
                 {
                     result = new Vector2(_role_offset.x, hud_mesh.Size.y + hud_mesh.ItemLineGap + result.y);
@@ -43,11 +43,11 @@ namespace GameHUD
             }
             else
             {
-                var mesh = _all_mesh[(int)_type];
-                var isshow = false;
+                var mesh = _base_hud_mesh[(int)_type];
+                var isupdate = false;
                 if (mesh != null && mesh.IsValid)
                 {
-                    isshow = true;
+                    isupdate = true;
                 }
                 var offset = GetComponentOffset(_type);
                 if (_type.Equals(HudComponentEnum.GuildIcon))
@@ -58,13 +58,13 @@ namespace GameHUD
                 {
                     BuildText(_type, relationEnum, name, offset);
                 }
-                if (!isshow)
+                if (!isupdate)
                     MeshHide(_type, false);
             }
         }
         public void UpdateBloodPercent(float percent)
         {
-            var blood_mesh = _all_mesh[(int)HudComponentEnum.Blood];
+            var blood_mesh = _base_hud_mesh[(int)HudComponentEnum.Blood];
             if (blood_mesh != null && blood_mesh.IsValid)
             {
                 var blood = blood_mesh as HUDBloodMesh;
@@ -81,25 +81,25 @@ namespace GameHUD
                     Debug.LogError("blood hud 没有此配置 " + relationEnum.ToString());
                     return;
                 }
-                var blood_mesh = _all_mesh[(int)HudComponentEnum.Blood];
+                var blood_mesh = _base_hud_mesh[(int)HudComponentEnum.Blood];
                 if (blood_mesh == null)
                 {
                     blood_mesh = ObjectPool<HUDBloodMesh>.Pop();
-                    _all_mesh[(int)HudComponentEnum.Blood] = blood_mesh;
+                    _base_hud_mesh[(int)HudComponentEnum.Blood] = blood_mesh;
                 }
-                var isshow=false;
+                var isupdate=false;
                 if (blood_mesh.IsValid)
                 {
-                    isshow=true;
+                    isupdate=true;
                 }
                 var blood = blood_mesh as HUDBloodMesh;
                 blood.Create(config.BloodRelationArray[(int)relationEnum], RolePos, _role_offset);
-                if(!isshow)
+                if(!isupdate)
                 MeshHide(HudComponentEnum.Blood, false);
             }
             else
             {
-                var blood_mesh = _all_mesh[(int)HudComponentEnum.Blood];
+                var blood_mesh = _base_hud_mesh[(int)HudComponentEnum.Blood];
                 if (blood_mesh != null && blood_mesh.IsValid)
                 {
                     MeshHide(HudComponentEnum.Blood);
@@ -122,18 +122,18 @@ namespace GameHUD
         {
             var type_index = (int)enume;
             HUDTxtMesh text_mesh;
-            if (_all_mesh[type_index] == null)
+            if (_base_hud_mesh[type_index] == null)
             {
                 if (string.IsNullOrEmpty(str))
                 {
                     return;
                 }
                 text_mesh = ObjectPool<HUDTxtMesh>.Pop();
-                _all_mesh[type_index] = text_mesh;
+                _base_hud_mesh[type_index] = text_mesh;
             }
             else
             {
-                text_mesh = _all_mesh[type_index] as HUDTxtMesh;
+                text_mesh = _base_hud_mesh[type_index] as HUDTxtMesh;
                 if (text_mesh.IsValid)
                     text_mesh.Release();
             }
@@ -225,18 +225,18 @@ namespace GameHUD
         {
             HUDSpriteMesh sp_mesh;
             int type_index = (int)enume;
-            if (_all_mesh[type_index] == null)
+            if (_base_hud_mesh[type_index] == null)
             {
                 if (string.IsNullOrEmpty(name))
                 {
                     return;
                 }
                 sp_mesh = ObjectPool<HUDSpriteMesh>.Pop();
-                _all_mesh[type_index] = sp_mesh;
+                _base_hud_mesh[type_index] = sp_mesh;
             }
             else
             {
-                sp_mesh = _all_mesh[type_index] as HUDSpriteMesh;
+                sp_mesh = _base_hud_mesh[type_index] as HUDSpriteMesh;
                 if (sp_mesh.IsValid)
                 {
                     sp_mesh.Release();
@@ -258,22 +258,22 @@ namespace GameHUD
             {
                 if (font_mat_rebuild)
                 {
-                    var hud_mesh = _all_mesh[(int)HudComponentEnum.Name];
+                    var hud_mesh = _base_hud_mesh[(int)HudComponentEnum.Name];
                     if (hud_mesh != null && hud_mesh.IsValid)
                     {
                         hud_mesh.Rebuild();
                     }
-                    hud_mesh = _all_mesh[(int)HudComponentEnum.Title];
+                    hud_mesh = _base_hud_mesh[(int)HudComponentEnum.Title];
                     if (hud_mesh != null && hud_mesh.IsValid)
                     {
                         hud_mesh.Rebuild();
                     }
-                    hud_mesh = _all_mesh[(int)HudComponentEnum.GuildName];
+                    hud_mesh = _base_hud_mesh[(int)HudComponentEnum.GuildName];
                     if (hud_mesh != null && hud_mesh.IsValid)
                     {
                         hud_mesh.Rebuild();
                     }
-                    hud_mesh = _all_mesh[(int)HudComponentEnum.GuildIcon];
+                    hud_mesh = _base_hud_mesh[(int)HudComponentEnum.GuildIcon];
                     if (hud_mesh != null && hud_mesh.IsValid)
                     {
                         hud_mesh.Rebuild();
@@ -288,9 +288,9 @@ namespace GameHUD
                     }
                 }
                 CheckPosChange();
-                for (int i = 0; i < _all_mesh.Length; i++)
+                for (int i = 0; i < _base_hud_mesh.Length; i++)
                 {
-                    var mesh = _all_mesh[i];
+                    var mesh = _base_hud_mesh[i];
                     if (mesh != null && mesh.IsValid)
                     {
                         mesh.UpdateLogic();
@@ -361,11 +361,11 @@ namespace GameHUD
             if (Vector3.Distance(_trans.position, RolePos) > 0.00001f)
             {
                 RolePos = _trans.position;
-                for (int i = 0; i < _all_mesh.Length; i++)
+                for (int i = 0; i < _base_hud_mesh.Length; i++)
                 {
-                    if (_all_mesh[i] != null && _all_mesh[i].IsValid)
+                    if (_base_hud_mesh[i] != null && _base_hud_mesh[i].IsValid)
                     {
-                        _all_mesh[i].RolePos = RolePos;
+                        _base_hud_mesh[i].RolePos = RolePos;
                     }
                 }
                 for (int i = 0; i < _dynamical_mesh.size; i++)
@@ -381,7 +381,7 @@ namespace GameHUD
         void MeshHide(HudComponentEnum enume, bool isHide = true)
         {
             //计算当前组件size
-            var select_mesh = _all_mesh[(int)enume];
+            var select_mesh = _base_hud_mesh[(int)enume];
             if (select_mesh == null)
             {
                 return;
@@ -389,9 +389,9 @@ namespace GameHUD
             var size = select_mesh.Size;
             var select_linegap = select_mesh.ItemLineGap;
             size.Set(size.x, size.y + select_linegap);
-            for (int i = (int)enume + 1; i < _all_mesh.Length; i++)
+            for (int i = (int)enume + 1; i < _base_hud_mesh.Length; i++)
             {
-                var mesh = _all_mesh[i];
+                var mesh = _base_hud_mesh[i];
                 if (mesh != null && mesh.IsValid)
                 {
                     var offset = mesh.Offset;
@@ -415,13 +415,13 @@ namespace GameHUD
         {
             HUDManager.Instance.Dirty = true;
             _init = false;
-            for (int i = _all_mesh.Length - 1; i >= 0; i--)
+            for (int i = _base_hud_mesh.Length - 1; i >= 0; i--)
             {
-                var mesh = _all_mesh[i];
+                var mesh = _base_hud_mesh[i];
                 if (mesh != null)
                 {
                     MeshRecyle(mesh);
-                    _all_mesh[i] = null;
+                    _base_hud_mesh[i] = null;
                 }
             }
             for (int i = _dynamical_mesh.size - 1; i >= 0; i--)
@@ -437,9 +437,9 @@ namespace GameHUD
         }
         public void FillMeshData(List<MeshData> meshDatas)
         {
-            for (int i = 0; i < _all_mesh.Length; i++)
+            for (int i = 0; i < _base_hud_mesh.Length; i++)
             {
-                var meshhud = _all_mesh[i];
+                var meshhud = _base_hud_mesh[i];
                 if (meshhud != null && meshhud.IsValid)
                 {
                     meshhud.FillMeshData(meshDatas);

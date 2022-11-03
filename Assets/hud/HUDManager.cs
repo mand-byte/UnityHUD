@@ -1,3 +1,5 @@
+#define OPEN_PROFILING
+#define OPEN_DISTANCE_SORT
 using System.Collections.Generic;
 using UnityEngine.U2D;
 using UnityEngine;
@@ -55,9 +57,25 @@ namespace GameHUD
             {
                 _all_meshdata[i].Clear();
             }
+#if OPEN_DISTANCE_SORT
+            _cache_info_list.Sort((item1, item2) =>
+            {
+                if (!item1.IsInited)
+                {
+                    return -1;
+                }
+                else if (!item2.IsInited)
+                {
+                    return 0;
+                }
+                return Vector3.Distance(Camera.main.transform.position, item1.Trans.position) < Vector3.Distance(Camera.main.transform.position, item2.Trans.position) ? 1 : -1;
+            });
+
+#endif
             for (int i = 0; i < _cache_info_list.size; i++)
             {
-                _cache_info_list[i].Object.FillMeshData(_all_meshdata);
+                if (_cache_info_list[i].IsInited)
+                    _cache_info_list[i].Object.FillMeshData(_all_meshdata);
             }
             for (int i = _all_meshdata.Count - 1; i >= 0; i--)
             {
@@ -133,9 +151,13 @@ namespace GameHUD
             if (Dirty)
             {
                 CMDbuff.Clear();
-                //UnityEngine.Profiling.Profiler.BeginSample("CombinMeshAndCommit");
+#if OPEN_PROFILING
+                UnityEngine.Profiling.Profiler.BeginSample("CombinMeshAndCommit");
+#endif
                 CombinMeshAndCommit();
-                //UnityEngine.Profiling.Profiler.EndSample();
+#if OPEN_PROFILING
+                UnityEngine.Profiling.Profiler.EndSample();
+#endif
                 Dirty = false;
             }
         }
