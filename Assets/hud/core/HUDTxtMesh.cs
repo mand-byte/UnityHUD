@@ -19,10 +19,7 @@ namespace GameHUD
             {
                 Release();
             }
-            if (Mat == null)
-            {
-                Mat = HUDManager.Instance.Mats[0];
-            }
+            MaterialIndex =0;
             _valid = true;
             this.str = str;
             this.outlineWidth = outlineWidth;
@@ -38,6 +35,7 @@ namespace GameHUD
             _rolePos = rolepos;
             _RoleOffset=new Vector3(0,roleoffset.y,0);
             Offset=uiOffset+new Vector2(0,ItemLineGap);
+            HUDManager.Instance.Dirty=true;
         }
         public override void Rebuild()
         {
@@ -66,7 +64,6 @@ namespace GameHUD
             {
                 Size = HUDStringParser.ParseText(m_SpriteVertex, str, Color.white, Color.white, Color.white, Color.white, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
             }
-            Dirty = true;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace GameHUD
             ItemLineGap=Config.TalkInfoArray[idx].ItemLineGap;
             _uioffset=uisoffset+new Vector2(0,ItemLineGap);
             Rebuild();
-
+            HUDManager.Instance.Dirty=true;
         }
         public override void Rebuild()
         {
@@ -59,7 +59,6 @@ namespace GameHUD
             sprite.ItemLineGap=0;
             sprite.PushSliceSprite(chat_info.Sprite, _rolePos,_role_offset, _uioffset, sp_width, sp_height, chat_info.BGSliceValue, chat_info.ItemAlign);
 
-            Dirty = true;
             if (chat_info.ItemAlign.Equals(AlignmentEnum.Middle))
             {
 

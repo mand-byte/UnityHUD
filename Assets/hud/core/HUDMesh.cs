@@ -15,6 +15,7 @@ namespace GameHUD
                 return _FollowRole;
             }
         }
+        public int MaterialIndex;
         //原始尺寸
         public Vector2Int Size;
         //记录需要偏移的坐标
@@ -28,14 +29,16 @@ namespace GameHUD
             }
             set
             {
-
+                HUDManager.Instance.Dirty = true;
                 UpdateOffset(value);
 
             }
         }
         protected Vector3 _RoleOffset;
-        public Vector3 RoleOffset{
-            get{
+        public Vector3 RoleOffset
+        {
+            get
+            {
                 return _RoleOffset;
             }
         }
@@ -44,14 +47,9 @@ namespace GameHUD
         {
             set
             {
-                if (_dirty)
-                {
-                    _rolePos = value;
-                }
-                else
-                {
-                    UpdatePos(value);
-                }
+                HUDManager.Instance.Dirty = true;
+                UpdatePos(value);
+
             }
             get
             {
@@ -63,6 +61,7 @@ namespace GameHUD
         {
             set
             {
+                HUDManager.Instance.Dirty = true;
                 UpdateColor(value);
             }
             get
@@ -74,14 +73,8 @@ namespace GameHUD
         {
             set
             {
-                if (_dirty)
-                {
-                    _Scale = value;
-                }
-                else
-                {
-                    UpdateScale(value);
-                }
+                HUDManager.Instance.Dirty = true;
+                UpdateScale(value);
             }
             get
             {
@@ -95,22 +88,6 @@ namespace GameHUD
             get
             {
                 return _valid;
-            }
-        }
-        bool _dirty;
-        ///<summary>
-        ///Dirty为true会导致顶点 uv offset color 索引全部更新,
-        ///如仅须更新顶点坐标,偏移值 就直接修改_rolePos,_offset
-        ///</summary>
-        public bool Dirty
-        {
-            get
-            {
-                return _dirty;
-            }
-            set
-            {
-                _dirty = value;
             }
         }
         HUDConfigObject _config;
@@ -128,14 +105,10 @@ namespace GameHUD
         public virtual void Release()
         {
             _valid = false;
-            ItemLineGap=0;
-            _RoleOffset=Vector3.zero;
+            ItemLineGap = 0;
+            _RoleOffset = Vector3.zero;
+            HUDManager.Instance.Dirty=true;
         }
-        public abstract void UpdateMesh();
-
-
-        public abstract void RenderTo(CommandBuffer cmdBuffer);
-
 
         protected abstract void UpdateOffset(Vector2 offset);
 
@@ -152,6 +125,7 @@ namespace GameHUD
         {
 
         }
+        public abstract void FillMeshData(List<MeshData> meshDatas);
 
     }
 

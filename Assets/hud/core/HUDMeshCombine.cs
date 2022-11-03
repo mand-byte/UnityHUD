@@ -32,31 +32,6 @@ namespace GameHUD
             _valid = false;
 
         }
-        public override void RenderTo(CommandBuffer cmdBuffer)
-        {
-
-            if (_meshs != null)
-            {
-                for (int i = 0; i < _meshs.size; i++)
-                {
-                    _meshs[i].RenderTo(cmdBuffer);
-                }
-            }
-        }
-
-        public override void UpdateMesh()
-        {
-            if (_meshs != null)
-            {
-                for (int i = 0; i < _meshs.size; i++)
-                {
-                    if (_meshs[i].Dirty)
-                        _meshs[i].UpdateMesh();
-                }
-            }
-            Dirty=false;
-        }
-
 
         protected override void UpdateOffset(Vector2 offset)
         {
@@ -102,11 +77,21 @@ namespace GameHUD
         }
         public override void Rebuild()
         {
-           if (_meshs != null)
+            if (_meshs != null)
             {
                 for (int i = 0; i < _meshs.size; i++)
                 {
                     _meshs[i].Rebuild();
+                }
+            }
+        }
+        public override void FillMeshData(List<MeshData> meshDatas)
+        {
+            if (_meshs != null)
+            {
+                for (int i = 0; i < _meshs.size; i++)
+                {
+                    _meshs[i].FillMeshData(meshDatas);
                 }
             }
         }

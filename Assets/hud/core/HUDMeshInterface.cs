@@ -8,6 +8,5 @@ namespace GameHUD
     internal interface HUDMeshInterface
     {
         public void Release();
-        public void RenderTo(CommandBuffer cmdBuffer);
     }
 }

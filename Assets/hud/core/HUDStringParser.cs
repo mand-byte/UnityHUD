@@ -78,12 +78,13 @@ namespace GameHUD
             return new Vector2Int(total_width, height);
         }
         //解析单个图片
-        public static Vector2Int PasreSprite(BetterList<HUDVertex> list, out Material mat, string str, Vector2 offset, AlignmentEnum alignmentEnum = AlignmentEnum.Middle, int width = 0, int height = 0)
+        public static Vector2Int PasreSprite(BetterList<HUDVertex> list, out int matindex, string str, Vector2 offset, AlignmentEnum alignmentEnum = AlignmentEnum.Middle, int width = 0, int height = 0)
         {
             var config = HUDManager.Instance.Config;
             var info = HUDManager.Instance.GetSprite(str);
             var vertex = list[list.size - 1];
-            mat = info.Mat;
+            matindex = info.MatIndex;
+            
             vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
             width = width == 0 ? info.Width : width;
             height = height == 0 ? info.Height : height;
@@ -128,12 +129,12 @@ namespace GameHUD
         /// <param name="height">最大高</param>
         /// <param name="isReverse">是否反转填充,从小到大还是从大到小</param>
         /// <returns>size大小</returns>
-        public static Vector2Int PasreSlicedFillSprite(BetterList<HUDVertex> list, out Material mat, string str, Vector2 offset, float fillAmount, int width, int height, bool isReverse, HUDVector4Int slicevalue, SliceTypeEnum slicetype, AlignmentEnum alignmentEnum)
+        public static Vector2Int PasreSlicedFillSprite(BetterList<HUDVertex> list, out int matindex, string str, Vector2 offset, float fillAmount, int width, int height, bool isReverse, HUDVector4Int slicevalue, SliceTypeEnum slicetype, AlignmentEnum alignmentEnum)
         {
 
             var config = HUDManager.Instance.Config;
             var info = HUDManager.Instance.GetSprite(str);
-            mat = info.Mat;
+            matindex = info.MatIndex;
             if (fillAmount <= 0) fillAmount = 0;
             else if (fillAmount >= 1) fillAmount = 1;
             int xSliceLength = (int)(width * fillAmount);
@@ -236,11 +237,11 @@ namespace GameHUD
         ///9宫切图
         ///</summary>
         ///<param name="slicevalue">x left,y right z bottom w top</param>
-        public static Vector2Int PasreSlicedSprite(BetterList<HUDVertex> list, out Material mat, string str, Vector2 offset, int width, int height, HUDVector4Int slicevalue, AlignmentEnum alignmentEnum)
+        public static Vector2Int PasreSlicedSprite(BetterList<HUDVertex> list, out int matindex, string str, Vector2 offset, int width, int height, HUDVector4Int slicevalue, AlignmentEnum alignmentEnum)
         {
             var config = HUDManager.Instance.Config;
             var info = HUDManager.Instance.GetSprite(str);
-            mat = info.Mat;
+            matindex = info.MatIndex;
             var xFactor = (info.xMax - info.xMin) / info.Width;
             var yFactor = (info.yMax - info.yMin) / info.Height;
             int slice_width = (int)(width - slicevalue.Left - slicevalue.Right);
@@ -305,7 +306,7 @@ namespace GameHUD
 
         static StringBuilder sb = new StringBuilder();
         //解析数字图片
-        public static Vector2Int PasrseNumber(BetterList<HUDVertex> list, out Material mat, char Perfixe, int gap, int number, bool sign, AlignmentEnum align)
+        public static Vector2Int PasrseNumber(BetterList<HUDVertex> list, out int matindex, char Perfixe, int gap, int number, bool sign, AlignmentEnum align)
         {
             var config = HUDManager.Instance.Config;
             sb.Clear();
@@ -313,8 +314,8 @@ namespace GameHUD
             sb.Append(Perfixe);
             int width = 0;
             int height = 0;
-            mat = null;
             string number_str;
+            matindex=1;
             if (sign)
             {
                 if (number > 0)
@@ -341,7 +342,7 @@ namespace GameHUD
                     Debug.LogWarningFormat("Warning ,{0} not in HUDAtlas !", sb.ToString());
                     continue;
                 }
-                mat = info.Mat;
+                matindex = info.MatIndex;
                 var vertex = ObjectPool<HUDVertex>.Pop();
                 vertex.clrLD = vertex.clrLU = vertex.clrRD = vertex.clrRU = Color.white;
                 float fL = width;

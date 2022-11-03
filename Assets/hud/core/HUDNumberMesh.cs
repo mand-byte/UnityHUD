@@ -14,9 +14,8 @@ namespace GameHUD
             {
 
                 HUDNumberConfig numconfig = Config.NumberTypes[type];
-                Size = HUDStringParser.PasrseNumber(m_SpriteVertex, out mMat, numconfig.Perfixe, numconfig.NumbersGap, number, numconfig.Sign, numconfig.NumbersAlign);
+                Size = HUDStringParser.PasrseNumber(m_SpriteVertex, out MaterialIndex, numconfig.Perfixe, numconfig.NumbersGap, number, numconfig.Sign, numconfig.NumbersAlign);
                 _valid = true;
-                Dirty = true;
             }
         }
 
@@ -29,7 +28,6 @@ namespace GameHUD
         {
             _valid = true;
             _FollowRole = false;
-            Dirty=true;
             numconfig = Config.NumberTypes[type];
             cCurve = numconfig.ColorCurve;
             sCurve = numconfig.ScaleCurve;
@@ -71,9 +69,11 @@ namespace GameHUD
             mesh.mColor = Color.white;
             mesh.Scale=1;
             mesh.Offset=_start_offset;
+            HUDManager.Instance.Dirty=true;
         }
         public override void UpdateLogic()
         {
+            
             if (_all_endtime < Time.realtimeSinceStartup)
             {
                 Release();

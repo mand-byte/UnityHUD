@@ -94,7 +94,8 @@ namespace GameHUD
         {
             if (show)
             {
-                if(config.BloodRelationArray.Length<=(int)relationEnum){
+                if (config.BloodRelationArray.Length <= (int)relationEnum)
+                {
                     Debug.LogError("blood hud 没有此配置 " + relationEnum.ToString());
                     return;
                 }
@@ -161,7 +162,7 @@ namespace GameHUD
             switch (enume)
             {
                 case HudComponentEnum.Name:
-                    if (config.NameRelationArray.Length<=(int)relation)
+                    if (config.NameRelationArray.Length <= (int)relation)
                     {
                         Debug.LogError("NameRelation 没有此配置 " + relation.ToString());
                         return;
@@ -170,7 +171,7 @@ namespace GameHUD
 
                     break;
                 case HudComponentEnum.Title:
-                    if (config.TitleInfoArray.Length<=(int)relation)
+                    if (config.TitleInfoArray.Length <= (int)relation)
                     {
                         Debug.LogError("TitleRelation 没有此配置 " + relation.ToString());
                         return;
@@ -178,7 +179,7 @@ namespace GameHUD
                     info = config.TitleInfoArray[(int)relation];
                     break;
                 case HudComponentEnum.GuildName:
-                    if (config.GuildRelationArray.Length<=(int)relation)
+                    if (config.GuildRelationArray.Length <= (int)relation)
                     {
                         Debug.LogError("GuildRelation 没有此配置 " + relation.ToString());
                         return;
@@ -201,7 +202,7 @@ namespace GameHUD
         }
         public void PushNumber(int number, int type, Vector2 offset)
         {
-            if (config.NumberTypes.Count<=type)
+            if (config.NumberTypes.Count <= type)
             {
                 return;
             }
@@ -304,10 +305,6 @@ namespace GameHUD
                     var mesh = _all_mesh[i];
                     if (mesh != null && mesh.IsValid)
                     {
-                        if (mesh.Dirty)
-                        {
-                            mesh.UpdateMesh();
-                        }
                         mesh.UpdateLogic();
                     }
                 }
@@ -316,10 +313,7 @@ namespace GameHUD
                     var mesh = _dynamical_mesh[i];
                     if (mesh != null && mesh.IsValid)
                     {
-                        if (mesh.Dirty)
-                        {
-                            mesh.UpdateMesh();
-                        }
+                        
                         mesh.UpdateLogic();
                     }
                 }
@@ -446,15 +440,14 @@ namespace GameHUD
             }
 
         }
-
-        public void RenderTo(CommandBuffer cmdBuffer)
+        public void FillMeshData(List<MeshData> meshDatas)
         {
             for (int i = 0; i < _all_mesh.Length; i++)
             {
                 var meshhud = _all_mesh[i];
                 if (meshhud != null && meshhud.IsValid)
                 {
-                    meshhud.RenderTo(cmdBuffer);
+                    meshhud.FillMeshData(meshDatas);
                 }
             }
             for (int i = 0; i < _dynamical_mesh.size; i++)
@@ -462,10 +455,9 @@ namespace GameHUD
                 var meshhud = _dynamical_mesh[i];
                 if (meshhud != null && meshhud.IsValid)
                 {
-                    meshhud.RenderTo(cmdBuffer);
+                    meshhud.FillMeshData(meshDatas);
                 }
             }
-
         }
 
     }

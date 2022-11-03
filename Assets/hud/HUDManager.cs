@@ -10,8 +10,9 @@ namespace GameHUD
 {
     public class HUDManager : MonoBehaviour
     {
-        public static readonly int PIXELS_PER_UNIT=100;
+        public static readonly int PIXELS_PER_UNIT = 100;
         BetterList<HUDInfo> _cache_info_list = new BetterList<HUDInfo>();
+        List<MeshData> _all_meshdata = new List<MeshData>();
         private static HUDManager _instance;
         private HUDManager() { }
         public static HUDManager Instance => _instance;
@@ -48,6 +49,77 @@ namespace GameHUD
         internal bool Dirty;
         bool ForceRefresh;
 
+        void CombinMeshAndCommit()
+        {
+            for (int i = 0; i < _all_meshdata.Count; i++)
+            {
+                _all_meshdata[i].Clear();
+            }
+            for (int i = 0; i < _cache_info_list.size; i++)
+            {
+                _cache_info_list[i].Object.FillMeshData(_all_meshdata);
+            }
+            for (int i = _all_meshdata.Count - 1; i >= 0; i--)
+            {
+                var meshdata = _all_meshdata[i];
+                if (meshdata.mVerts.buffer == null || meshdata.mVerts.size == 0)
+                {
+                    continue;
+                }
+                int total = meshdata.mVerts.buffer.Length;
+                int nLast = meshdata.mVerts.size - 1;
+                int vertscount = meshdata.mVerts.size;
+                if (meshdata.mVerts.size < meshdata.mVerts.buffer.Length)
+                {
+                    //修改buff数据
+                    Vector3[] vers = meshdata.mVerts.buffer;
+                    Vector2[] uv1s = meshdata.mUvs.buffer;
+                    Vector2[] offs = meshdata.mOffset.buffer;
+                    Color32[] cols = meshdata.mCols.buffer;
+                    for (int k = meshdata.mVerts.size; k < total; ++k)
+                    {
+                        vers[k] = vers[nLast];
+                        uv1s[k] = uv1s[nLast];
+                        offs[k] = offs[nLast];
+                        cols[k] = cols[nLast];
+                    }
+                    meshdata.mVerts.size = total;
+                    meshdata.mUvs.size = total;
+                    meshdata.mCols.size = total;
+                    meshdata.mOffset.size = total;
+                }
+                meshdata.mIndices.CleanPreWrite(vertscount / 4 * 6);
+                int j = 0, index = 0;
+                int nMaxCount = meshdata.mIndices.buffer.Length;
+                for (; j < vertscount; j += 4)
+                {
+                    meshdata.mIndices[index++] = j;
+                    meshdata.mIndices[index++] = j + 1;
+                    meshdata.mIndices[index++] = j + 2;
+
+                    meshdata.mIndices[index++] = j + 2;
+                    meshdata.mIndices[index++] = j + 3;
+                    meshdata.mIndices[index++] = j;
+                }
+                nLast = vertscount - 1;
+                for (; index < nMaxCount;)
+                {
+                    meshdata.mIndices[index++] = nLast;
+                    meshdata.mIndices[index++] = nLast;
+                    meshdata.mIndices[index++] = nLast;
+                    meshdata.mIndices[index++] = nLast;
+                    meshdata.mIndices[index++] = nLast;
+                    meshdata.mIndices[index++] = nLast;
+                }
+                meshdata.mIndices.size = index;
+                meshdata.mMesh.vertices = meshdata.mVerts.buffer;
+                meshdata.mMesh.uv = meshdata.mUvs.buffer;
+                meshdata.mMesh.uv2 = meshdata.mOffset.buffer;
+                meshdata.mMesh.colors32 = meshdata.mCols.buffer;
+                meshdata.mMesh.triangles = meshdata.mIndices.buffer;
+                CMDbuff.DrawMesh(meshdata.mMesh, Matrix4x4.identity, meshdata.mMat);
+            }
+        }
         void LateUpdate()
         {
             for (int i = 0; i < _cache_info_list.size; i++)
@@ -61,10 +133,9 @@ namespace GameHUD
             if (Dirty)
             {
                 CMDbuff.Clear();
-                for (int i = 0; i < _cache_info_list.size; i++)
-                {
-                    _cache_info_list[i].Object.RenderTo(CMDbuff);
-                }
+                //UnityEngine.Profiling.Profiler.BeginSample("CombinMeshAndCommit");
+                CombinMeshAndCommit();
+                //UnityEngine.Profiling.Profiler.EndSample();
                 Dirty = false;
             }
         }
@@ -96,6 +167,7 @@ namespace GameHUD
                     GameObject.Destroy(_configObject);
                 }
                 _configObject = config;
+                _all_meshdata.Clear();
                 InitFont();
                 InitAtlas();
             }
@@ -121,8 +193,11 @@ namespace GameHUD
                 memoryStream.Dispose();
                 var tex = _configObject.Atlas[i];
                 var m_mat = new Material(Shader.Find("Unlit/HUDSprite"));
+                var data = new MeshData();
+                data.mMat = m_mat;
+                _all_meshdata.Add(data);
                 m_mat.SetTexture("_MainTex", _configObject.Atlas[i]);
-                m_mat.SetFloat("_UnitPerPixel",1f/PIXELS_PER_UNIT);
+                m_mat.SetFloat("_UnitPerPixel", 1f / PIXELS_PER_UNIT);
                 for (int j = 0; j < atlas.Length; j++)
                 {
                     atlas[j].Mat = m_mat;
@@ -156,8 +231,11 @@ namespace GameHUD
             }
             var sh = Shader.Find("Unlit/HUDFont");
             var _font_mat = new Material(sh);
+            var data = new MeshData();
+            data.mMat = _font_mat;
+            _all_meshdata.Add(data);
             _mats.Add(_font_mat);
-            _font_mat.SetFloat("_UnitPerPixel",1f/PIXELS_PER_UNIT);
+            _font_mat.SetFloat("_UnitPerPixel", 1f / PIXELS_PER_UNIT);
             _font_mat.mainTexture = _configObject.Font.material.mainTexture;
             _font_mat.mainTextureOffset = _configObject.Font.material.mainTextureOffset;
             _font_mat.mainTextureScale = _configObject.Font.material.mainTextureScale;
