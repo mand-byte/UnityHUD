@@ -121,6 +121,7 @@ namespace GameHUD
         {
 
         }
+        //用于font的贴图重建时,需要重新获取uv并绘制
         public virtual void Rebuild()
         {
 

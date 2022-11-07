@@ -2,10 +2,22 @@ namespace GameHUD
 {
     public enum HudComponentEnum
     {
+        /// <summary>
+        /// 血条
+        /// </summary>
         Blood,
+        /// <summary>
+        /// 名字
+        /// </summary>
         Name,
         Title,
+        /// <summary>
+        /// 称号
+        /// </summary>
         GuildName,
+        /// <summary>
+        /// 称号图标
+        /// </summary>
         GuildIcon,
         Total,
     }

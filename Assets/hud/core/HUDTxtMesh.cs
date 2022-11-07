@@ -13,14 +13,13 @@ namespace GameHUD
         FontStyle style;
         int CharGap; int LineGap;
         AlignmentEnum alignment; int widthlimit = 0;
-        public void PushText(string str, List<Color32> color, Color32 outlineColor, Vector3 rolepos, Vector3 roleoffset,Vector2 uiOffset, float outlineWidth, int fontSize, int CharGap, int TxtLineGap, FontStyle style, AlignmentEnum alignment, int widthlimit = 0)
+        Vector2  uioffset ;
+        Vector3 role_offset;
+        public void PushText(string str, List<Color32> color, Color32 outlineColor, Vector3 rolepos, Vector3 roleoffset, Vector2 uiOffset, float outlineWidth, int fontSize, int CharGap, int TxtLineGap, FontStyle style, AlignmentEnum alignment, int widthlimit = 0)
         {
-            if (_valid)
-            {
-                Release();
-            }
-            MaterialIndex =0;
-            _valid = true;
+
+            MaterialIndex = 0;
+
             this.str = str;
             this.outlineWidth = outlineWidth;
             this.outlineColor = outlineColor;
@@ -31,14 +30,19 @@ namespace GameHUD
             this.style = style;
             this.alignment = alignment;
             this.widthlimit = widthlimit;
-            Rebuild();
+            this.uioffset = uiOffset + new Vector2(0, ItemLineGap);
             _rolePos = rolepos;
-            _RoleOffset=new Vector3(0,roleoffset.y,0);
-            Offset=uiOffset+new Vector2(0,ItemLineGap);
-            HUDManager.Instance.Dirty=true;
+            role_offset =  new Vector3(0, roleoffset.y, 0);
+            Rebuild();
+            
+
         }
         public override void Rebuild()
         {
+            if (_valid)
+            {
+                Release();
+            }
             var temp_offset = Vector2.zero;
             if (outlineWidth != 0)
             {
@@ -64,6 +68,10 @@ namespace GameHUD
             {
                 Size = HUDStringParser.ParseText(m_SpriteVertex, str, Color.white, Color.white, Color.white, Color.white, temp_offset, fontSize, CharGap, LineGap, style, alignment, widthlimit);
             }
+            _RoleOffset=this.role_offset;    
+            Offset = this.uioffset;
+            _valid = true;
+            HUDManager.Instance.Dirty = true;
         }
     }
 }

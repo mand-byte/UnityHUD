@@ -382,7 +382,7 @@ namespace GameHUD
         {
             //计算当前组件size
             var select_mesh = _base_hud_mesh[(int)enume];
-            if (select_mesh == null)
+            if (select_mesh == null||select_mesh.IsValid==false)
             {
                 return;
             }
