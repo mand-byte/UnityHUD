@@ -50,8 +50,10 @@ namespace GameHUD
         Dictionary<string, SpriteInfo> _sprite_dict = new Dictionary<string, SpriteInfo>();
         internal bool Dirty;
         bool ForceRefresh;
+        static Camera _camera;
+        public static Camera Camera => _camera;
 
-        void CombinMeshAndCommit()
+        void CombineMeshAndCommit()
         {
             for (int i = 0; i < _all_meshdata.Count; i++)
             {
@@ -60,15 +62,14 @@ namespace GameHUD
 #if OPEN_DISTANCE_SORT
             _cache_info_list.Sort((item1, item2) =>
             {
-                if (!item1.IsInited)
+                if (item1.IsInited && item2.IsInited)
                 {
-                    return -1;
+                    return Vector3.Distance(Camera.main.transform.position, item1.Trans.position) < Vector3.Distance(Camera.main.transform.position, item2.Trans.position) ? 1 : -1;
                 }
-                else if (!item2.IsInited)
+                else
                 {
                     return 0;
                 }
-                return Vector3.Distance(Camera.main.transform.position, item1.Trans.position) < Vector3.Distance(Camera.main.transform.position, item2.Trans.position) ? 1 : -1;
             });
 
 #endif
@@ -154,7 +155,7 @@ namespace GameHUD
 #if OPEN_PROFILING
                 UnityEngine.Profiling.Profiler.BeginSample("CombinMeshAndCommit");
 #endif
-                CombinMeshAndCommit();
+                CombineMeshAndCommit();
 #if OPEN_PROFILING
                 UnityEngine.Profiling.Profiler.EndSample();
 #endif
@@ -190,6 +191,22 @@ namespace GameHUD
                 }
                 _configObject = config;
                 _all_meshdata.Clear();
+                for (int i = 0; i < Camera.allCameras.Length; i++)
+                {
+                    var camera = Camera.allCameras[i];
+                    if (camera != null)
+                    {
+                        var data = camera.gameObject.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+                        if (data != null)
+                        {
+                            if (data.renderType.Equals(UnityEngine.Rendering.Universal.CameraRenderType.Base))
+                            {
+                                _camera = camera;
+                                break;
+                            }
+                        }
+                    }
+                }
                 InitFont();
                 InitAtlas();
             }
@@ -231,9 +248,10 @@ namespace GameHUD
         }
         void OnFontTextureChange(Font f)
         {
-            if (Config && Config.Font && f.name.Equals(Config.Font.name))
+            if (Config != null && Config.Font != null && f.name.Equals(Config.Font.name))
             {
                 ForceRefresh = true;
+                Dirty = true;
             }
         }
 

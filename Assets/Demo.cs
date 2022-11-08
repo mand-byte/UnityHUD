@@ -17,15 +17,13 @@ namespace GameHUD
         int _hurt_number; int _number_type;
         void Start()
         {
-            if (config == null || temp == null)
+            if (config == null)
             {
                 return;
             }
             HUDManager.Init(config);
-            role = GameObject.Instantiate(temp);
-            hud = HUDManager.Instance.CreateHUD(1);
 
-            hud.Init(role.transform, offset);
+
             var doc = GetComponent<UnityEngine.UIElements.UIDocument>();
             var uiasset = doc.rootVisualElement;
             var childCount = uiasset.childCount;
@@ -167,6 +165,28 @@ namespace GameHUD
                     var btn = element as Button;
                     btn.RegisterCallback<UnityEngine.UIElements.ClickEvent>((click) =>
                     {
+                        if (temp == null)
+                        {
+                            return;
+                        }
+                        if (role != null)
+                        {
+                            var _role = GameObject.Instantiate(temp, role.position, role.rotation, role.parent);
+                            GameObject.Destroy(role.gameObject);
+                            role = _role;
+                        }
+                        else
+                        {
+                            role = GameObject.Instantiate(temp, Vector3.zero, Quaternion.identity, null);
+                        }
+
+                        if (hud != null)
+                        {
+                            hud.Release();
+                            hud = null;
+                        }
+                        hud = HUDManager.Instance.CreateHUD(1);
+                        hud.Init(role.transform, offset);
                         hud.BloodVisable(true, (HUDRelationEnum)_blood_index);
                         hud.UpdateBloodPercent(_blood_percent);
                         hud.UpdateHudInfo(HudComponentEnum.Name, _name, (HUDRelationEnum)_name_index);
@@ -183,7 +203,7 @@ namespace GameHUD
                     {
                         if (!string.IsNullOrEmpty(_chat_content))
                         {
-                            hud.Talk(_chat_index, _chat_content);
+                            hud?.Talk(_chat_index, _chat_content);
                         }
                     });
                 }
@@ -249,7 +269,7 @@ namespace GameHUD
                             var r = new Unity.Mathematics.Random((uint)System.Guid.NewGuid().GetHashCode());
                             var x = r.NextFloat(-3f, 3f);
                             var pos = new Vector2(x, 0);
-                            hud.HurtNumber(_number_type, _hurt_number, pos);
+                            hud?.HurtNumber(_number_type, _hurt_number, pos);
                         }
 
 

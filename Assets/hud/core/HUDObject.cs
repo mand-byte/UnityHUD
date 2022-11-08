@@ -87,15 +87,15 @@ namespace GameHUD
                     blood_mesh = ObjectPool<HUDBloodMesh>.Pop();
                     _base_hud_mesh[(int)HudComponentEnum.Blood] = blood_mesh;
                 }
-                var isupdate=false;
+                var isupdate = false;
                 if (blood_mesh.IsValid)
                 {
-                    isupdate=true;
+                    isupdate = true;
                 }
                 var blood = blood_mesh as HUDBloodMesh;
                 blood.Create(config.BloodRelationArray[(int)relationEnum], RolePos, _role_offset);
-                if(!isupdate)
-                MeshHide(HudComponentEnum.Blood, false);
+                if (!isupdate)
+                    MeshHide(HudComponentEnum.Blood, false);
             }
             else
             {
@@ -188,6 +188,7 @@ namespace GameHUD
             text_mesh.ItemLineGap = ItemLineGap;
             text_mesh.PushText(str, color, colorOutline, RolePos, _role_offset, uiOffset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
         }
+
         public void PushNumber(int number, int type, Vector2 offset)
         {
             if (config.NumberTypes.Count <= type)
@@ -195,7 +196,8 @@ namespace GameHUD
                 return;
             }
             var number_mesh = ObjectPool<HUDNumberMesh>.Pop();
-            number_mesh.PushNumber(number, type, RolePos, offset);
+            var start_pos = HUDManager.Camera.transform.right * offset.x + HUDManager.Camera.transform.up * offset.y + _trans.position;
+            number_mesh.PushNumber(number, type, start_pos, offset);
             _dynamical_mesh.Add(number_mesh);
         }
         public void PushTalk(int idx, string content)
@@ -316,6 +318,10 @@ namespace GameHUD
                 }
 
             }
+            else
+            {
+                Debug.LogWarning("hud object TRANSFORM is missing check it out!!");
+            }
         }
         void MeshRecyle(HUDMesh mesh)
         {
@@ -382,7 +388,7 @@ namespace GameHUD
         {
             //计算当前组件size
             var select_mesh = _base_hud_mesh[(int)enume];
-            if (select_mesh == null||select_mesh.IsValid==false)
+            if (select_mesh == null || select_mesh.IsValid == false)
             {
                 return;
             }

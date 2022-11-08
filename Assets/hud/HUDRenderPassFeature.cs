@@ -45,7 +45,7 @@ namespace GameHUD
             m_ScriptablePass = new CustomRenderPass();
 
             // Configures where the render pass should be injected.
-            m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing;
+            m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
         }
 
         // Here you can inject one or multiple render passes in the renderer.

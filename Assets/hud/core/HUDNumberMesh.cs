@@ -19,7 +19,7 @@ namespace GameHUD
             }
         }
 
-        Vector2  _start_offset;
+        Vector2 _start_offset;
         float _all_endtime;
         HUDNumberConfig numconfig;
         AnimationCurve cCurve, sCurve, pCurve;
@@ -61,25 +61,24 @@ namespace GameHUD
             _cur_time = Time.realtimeSinceStartup;
 
             var mesh = ObjectPool<HUDNumberMeshBase>.Pop();
-            uioffset*=HUDManager.PIXELS_PER_UNIT;
-            _start_offset = uioffset;
+            _start_offset = Vector2.zero;
             Meshs.Add(mesh);
             mesh.PushNumber(number, type);
             mesh.RolePos = rolePos;
             mesh.mColor = Color.white;
-            mesh.Scale=1;
-            mesh.Offset=_start_offset;
-            HUDManager.Instance.Dirty=true;
+            mesh.Scale = 1;
+            mesh.Offset = _start_offset;
+            HUDManager.Instance.Dirty = true;
         }
         public override void UpdateLogic()
         {
-            
+
             if (_all_endtime < Time.realtimeSinceStartup)
             {
                 Release();
                 return;
             }
-            var d =  Time.realtimeSinceStartup-_cur_time;
+            var d = Time.realtimeSinceStartup - _cur_time;
             var c = cCurve.Evaluate(d);
             Meshs[0].mColor = new Color(1, 1, 1, c);
             var o = pCurve.Evaluate(d);
