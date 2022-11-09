@@ -207,10 +207,15 @@ namespace GameHUD
                         }
                     }
                 }
+                if (_cameraTrans is null)
+                {
+                    Debug.LogWarning("can not find the main camera!");
+                    return;
+                }
                 InitFont();
                 InitAtlas();
+                ForceRefresh = true;
             }
-            ForceRefresh = true;
         }
         // ///<summary>
         // ///初始化图集

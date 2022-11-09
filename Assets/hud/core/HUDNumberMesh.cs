@@ -10,13 +10,24 @@ namespace GameHUD
     {
         private class HUDNumberMeshBase : HUDMeshSingle
         {
+            HUDNumberConfig numconfig;
+            int number;
             public void PushNumber(int number, int type)
             {
-
-                HUDNumberConfig numconfig = Config.NumberTypes[type];
+                this.number=number;
+                numconfig = Config.NumberTypes[type];
+                Rebuild();
+            }
+            public override void Rebuild()
+            {
+                if (_valid)
+                {
+                    Release();
+                }
                 Size = HUDStringParser.PasrseNumber(m_SpriteVertex, out MaterialIndex, numconfig.Perfixe, numconfig.NumbersGap, number, numconfig.Sign, numconfig.NumbersAlign);
                 _valid = true;
             }
+
         }
 
         Vector2 _start_offset;

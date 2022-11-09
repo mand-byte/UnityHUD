@@ -7,22 +7,33 @@ namespace GameHUD
     {
         HUDBloodInfoObject info;
         Vector2 bd_offset;
+        float blood_value;
+        Vector3 roleoffset;
         public void PushValue(float value)
         {
             if (!_valid)
             {
                 return;
             }
+            blood_value = value;
             HUDStringParser.PasreSlicedFillSprite(m_SpriteVertex, out MaterialIndex, info.Blood, bd_offset, value, info.BloodWidth, info.BloodHeight, info.Reverse, info.SliceValue, info.SliceType, info.Align);
-            HUDManager.Instance.Dirty=true;
+            HUDManager.Instance.Dirty = true;
         }
         public void Create(HUDBloodInfoObject _info, Vector3 rolepos, Vector3 roleoffset)
+        {
+
+            blood_value = 1;
+            info = _info;
+            _rolePos = rolepos;
+            this.roleoffset=roleoffset;
+            Rebuild();
+        }
+        public override void Rebuild()
         {
             if (_valid)
             {
                 Release();
             }
-            info = _info;
             _valid = true;
             for (int i = 0; i < 3; i++)
             {
@@ -32,7 +43,7 @@ namespace GameHUD
             }
             //计算血条背景
             Size = HUDStringParser.PasreSlicedFillSprite(m_SpriteVertex, out MaterialIndex, info.BloodBg, Vector2.zero, 1f, info.BloodWidthBG, info.BloodHeightBG, info.Reverse, info.SliceBGValue, info.SliceType, info.Align);
-          
+
             for (int i = 0; i < 3; i++)
             {
                 var vertex = ObjectPool<HUDVertex>.Pop();
@@ -48,11 +59,11 @@ namespace GameHUD
             {
                 bd_offset.Set(bd_offset.x - info.BloodWidthBG + info.BloodWidth, bd_offset.y);
             }
-            HUDStringParser.PasreSlicedFillSprite(m_SpriteVertex, out MaterialIndex, info.Blood, bd_offset, 1f, info.BloodWidth, info.BloodHeight, info.Reverse, info.SliceValue, info.SliceType, info.Align);
+            HUDStringParser.PasreSlicedFillSprite(m_SpriteVertex, out MaterialIndex, info.Blood, bd_offset, blood_value, info.BloodWidth, info.BloodHeight, info.Reverse, info.SliceValue, info.SliceType, info.Align);
 
             _RoleOffset = new Vector3(0, roleoffset.y, 0);
-            _rolePos = rolepos;
-            HUDManager.Instance.Dirty=true;
+           
+            HUDManager.Instance.Dirty = true;
         }
 
     }
