@@ -105,13 +105,14 @@ namespace GameHUD
         {
             var data = meshDatas[MaterialIndex];
             Vector2 vOffset = Vector2.zero;
+            var pos=_rolePos + _RoleOffset;
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
-                data.mVerts.Add(RolePos + RoleOffset);
-                data.mVerts.Add(RolePos + RoleOffset);
-                data.mVerts.Add(RolePos + RoleOffset);
-                data.mVerts.Add(RolePos + RoleOffset);
+                data.mVerts.Add(pos);
+                data.mVerts.Add(pos);
+                data.mVerts.Add(pos);
+                data.mVerts.Add(pos);
 
                 vOffset = v.vecRU;
                 vOffset.x *= Scale;

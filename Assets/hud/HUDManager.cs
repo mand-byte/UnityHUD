@@ -50,8 +50,8 @@ namespace GameHUD
         Dictionary<string, SpriteInfo> _sprite_dict = new Dictionary<string, SpriteInfo>();
         internal bool Dirty;
         bool ForceRefresh;
-        static Camera _camera;
-        public static Camera Camera => _camera;
+        static Transform _cameraTrans;
+        public static Transform CameraTrans => _cameraTrans;
 
         void CombineMeshAndCommit()
         {
@@ -64,7 +64,7 @@ namespace GameHUD
             {
                 if (item1.IsInited && item2.IsInited)
                 {
-                    return Vector3.Distance(Camera.main.transform.position, item1.Trans.position) < Vector3.Distance(Camera.main.transform.position, item2.Trans.position) ? 1 : -1;
+                    return Vector3.Distance(_cameraTrans.position, item1.Trans.position) < Vector3.Distance(_cameraTrans.position, item2.Trans.position) ? 1 : -1;
                 }
                 else
                 {
@@ -201,7 +201,7 @@ namespace GameHUD
                         {
                             if (data.renderType.Equals(UnityEngine.Rendering.Universal.CameraRenderType.Base))
                             {
-                                _camera = camera;
+                                _cameraTrans = camera.transform;
                                 break;
                             }
                         }

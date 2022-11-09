@@ -196,7 +196,7 @@ namespace GameHUD
                 return;
             }
             var number_mesh = ObjectPool<HUDNumberMesh>.Pop();
-            var start_pos = HUDManager.Camera.transform.right * offset.x + HUDManager.Camera.transform.up * offset.y + _trans.position;
+            var start_pos = HUDManager.CameraTrans.right * offset.x + HUDManager.CameraTrans.up * offset.y + _trans.position;
             number_mesh.PushNumber(number, type, start_pos, offset);
             _dynamical_mesh.Add(number_mesh);
         }
