@@ -40,6 +40,7 @@ namespace GameHUD
         public void Dispose()
         {
             Object.Destroy(mMesh);
+            Object.Destroy(mMat);
             mMesh = null;
             mMat = null;
             mVerts = null;

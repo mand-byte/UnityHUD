@@ -31,20 +31,31 @@ namespace GameHUD
         {
             get
             {
-                if (_cmdbuff == null)
-                {
-                    _cmdbuff = new CommandBuffer();
-                }
                 return _cmdbuff;
             }
 
         }
-        BetterList<Material> _mats;
-        public Material[] Mats
+        bool active;
+        ///<summary>
+        ///是否显示所有hud,用于需要干净的场景时使用,比如过场动画等
+        ///</summary>
+        public bool Active
         {
+            set
+            {
+                if (active.Equals(value))
+                {
+                    return;
+                }
+                if (value)
+                {
+                    Dirty = true;
+                }
+                active = value;
+            }
             get
             {
-                return _mats.buffer;
+                return active;
             }
         }
         Dictionary<string, SpriteInfo> _sprite_dict = new Dictionary<string, SpriteInfo>();
@@ -136,11 +147,16 @@ namespace GameHUD
                 meshdata.mMesh.uv2 = meshdata.mOffset.buffer;
                 meshdata.mMesh.colors32 = meshdata.mCols.buffer;
                 meshdata.mMesh.triangles = meshdata.mIndices.buffer;
-                CMDbuff.DrawMesh(meshdata.mMesh, Matrix4x4.identity, meshdata.mMat);
+                _cmdbuff.DrawMesh(meshdata.mMesh, Matrix4x4.identity, meshdata.mMat);
             }
         }
         void LateUpdate()
         {
+            if (!active)
+            {
+                _cmdbuff.Clear();
+                return;
+            }
             for (int i = 0; i < _cache_info_list.size; i++)
             {
                 _cache_info_list[i].Object.Update(ForceRefresh);
@@ -151,7 +167,7 @@ namespace GameHUD
             }
             if (Dirty)
             {
-                CMDbuff.Clear();
+                _cmdbuff.Clear();
 #if OPEN_PROFILING
                 UnityEngine.Profiling.Profiler.BeginSample("CombinMeshAndCommit");
 #endif
@@ -174,7 +190,9 @@ namespace GameHUD
                 var go = new GameObject("HUDManager");
                 GameObject.DontDestroyOnLoad(go);
                 _instance = go.AddComponent<HUDManager>();
+                _instance._cmdbuff=new CommandBuffer();
                 Font.textureRebuilt += _instance.OnFontTextureChange;
+                _instance.active = true;
                 _instance.ChangeConfig(config);
             }
         }
@@ -248,7 +266,6 @@ namespace GameHUD
                     atlas[j].MatIndex = i + 1;
                     _sprite_dict[atlas[j].Name] = atlas[j];
                 }
-                _mats.Add(m_mat);
             }
         }
         void OnFontTextureChange(Font f)
@@ -262,24 +279,12 @@ namespace GameHUD
 
         public void InitFont()
         {
-            if (_mats == null)
-            {
-                _mats = new BetterList<Material>();
-            }
-            else
-            {
-                for (int i = 0; i < _mats.size; i++)
-                {
-                    UnityEngine.Object.Destroy(_mats[i]);
-                }
-                _mats.Clear();
-            }
+           
             var sh = Shader.Find("Unlit/HUDFont");
             var _font_mat = new Material(sh);
             var data = new MeshData();
             data.mMat = _font_mat;
             _all_meshdata.Add(data);
-            _mats.Add(_font_mat);
             _font_mat.SetFloat("_UnitPerPixel", 1f / PIXELS_PER_UNIT);
             _font_mat.mainTexture = _configObject.Font.material.mainTexture;
             _font_mat.mainTextureOffset = _configObject.Font.material.mainTextureOffset;
