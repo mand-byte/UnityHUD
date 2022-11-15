@@ -190,7 +190,7 @@ namespace GameHUD
                 var go = new GameObject("HUDManager");
                 GameObject.DontDestroyOnLoad(go);
                 _instance = go.AddComponent<HUDManager>();
-                _instance._cmdbuff=new CommandBuffer();
+                _instance._cmdbuff = new CommandBuffer();
                 Font.textureRebuilt += _instance.OnFontTextureChange;
                 _instance.active = true;
                 _instance.ChangeConfig(config);
@@ -279,7 +279,7 @@ namespace GameHUD
 
         public void InitFont()
         {
-           
+
             var sh = Shader.Find("Unlit/HUDFont");
             var _font_mat = new Material(sh);
             var data = new MeshData();

@@ -106,7 +106,8 @@ namespace GameHUD
         {
             var data = meshDatas[MaterialIndex];
             Vector2 vOffset = Vector2.zero;
-            var pos=_rolePos + _RoleOffset;
+            var pos=_rolePos +new Vector3(0,RoleOffset.y,0);
+            var role_offset_x=RoleOffset.x*HUDManager.PIXELS_PER_UNIT;
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
@@ -119,24 +120,28 @@ namespace GameHUD
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
+                vOffset.x+=role_offset_x;
                 data.mOffset.Add(vOffset);
 
                 vOffset = v.vecRD;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
+                vOffset.x+=role_offset_x;
                 data.mOffset.Add(vOffset);
 
                 vOffset = v.vecLD;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
+                vOffset.x+=role_offset_x;
                 data.mOffset.Add(vOffset);
 
                 vOffset = v.vecLU;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
+                vOffset.x+=role_offset_x;
                 data.mOffset.Add(vOffset);
 
                 data.mUvs.Add(v.uvRU);

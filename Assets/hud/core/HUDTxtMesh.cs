@@ -32,7 +32,7 @@ namespace GameHUD
             this.widthlimit = widthlimit;
             this.uioffset = uiOffset + new Vector2(0, ItemLineGap);
             _rolePos = rolepos;
-            role_offset =  new Vector3(0, roleoffset.y, 0);
+            role_offset =  roleoffset;
             Rebuild();
             
 

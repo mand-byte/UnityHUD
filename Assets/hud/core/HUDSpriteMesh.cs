@@ -30,7 +30,7 @@ namespace GameHUD
             this.border = border;
             this.alignmentEnum = alignmentEnum;
             IsSlice = true;
-            this.role_offset = new Vector3(0, roleoffset.y, 0);
+            this.role_offset = roleoffset;
             this.uioffset = uioffset + new Vector2(0, ItemLineGap);
             _rolePos = rolepos;
             Rebuild();

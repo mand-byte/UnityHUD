@@ -61,7 +61,7 @@ namespace GameHUD
             }
             HUDStringParser.PasreSlicedFillSprite(m_SpriteVertex, out MaterialIndex, info.Blood, bd_offset, blood_value, info.BloodWidth, info.BloodHeight, info.Reverse, info.SliceValue, info.SliceType, info.Align);
 
-            _RoleOffset = new Vector3(0, roleoffset.y, 0);
+            _RoleOffset = roleoffset;
            
             HUDManager.Instance.Dirty = true;
         }
