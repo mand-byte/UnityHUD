@@ -14,13 +14,13 @@ namespace GameHUD
         bool _init;
         Transform _trans;
         //初始角色偏移
-        Vector2 _role_offset;
+        Vector3 _role_offset;
 
 
         //获取当前需要偏移的高度
         Vector2 GetComponentOffset(HudComponentEnum enume)
         {
-            var result = Vector2.zero;
+            var result = Vector3.zero;
             for (int i = (int)enume - 1; i >= 0; i--)
             {
                 var hud_mesh = _base_hud_mesh[i];
@@ -110,7 +110,7 @@ namespace GameHUD
         //初始偏移
 
 
-        public void Init(Transform trans, Vector2 offset)
+        public void Init(Transform trans, Vector3 offset)
         {
             _trans = trans;
             _role_offset = offset;

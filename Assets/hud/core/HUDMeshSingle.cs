@@ -16,6 +16,7 @@ namespace GameHUD
             mMesh.Optimize();
             mVerts = new BetterList<Vector3>();
             mOffset = new BetterList<Vector2>();
+            mRole_XZ_Offset = new BetterList<Vector2>();
             mUvs = new BetterList<Vector2>();
             mCols = new BetterList<Color32>();
             mIndices = new BetterList<int>();
@@ -23,6 +24,7 @@ namespace GameHUD
         public BetterList<Vector3> mVerts;
         //ui偏移
         public BetterList<Vector2> mOffset;
+        public BetterList<Vector2> mRole_XZ_Offset;
         public BetterList<Vector2> mUvs;
         public BetterList<Color32> mCols;
         public BetterList<int> mIndices;
@@ -34,6 +36,7 @@ namespace GameHUD
             mVerts.Clear();
             mUvs.Clear();
             mCols.Clear();
+            mRole_XZ_Offset.Clear();
             mIndices.Clear();
             mOffset.Clear();
         }
@@ -45,6 +48,7 @@ namespace GameHUD
             mMat = null;
             mVerts = null;
             mOffset = null;
+            mRole_XZ_Offset = null;
             mUvs = null;
             mCols = null;
             mIndices = null;
@@ -106,8 +110,8 @@ namespace GameHUD
         {
             var data = meshDatas[MaterialIndex];
             Vector2 vOffset = Vector2.zero;
-            var pos=_rolePos +new Vector3(0,RoleOffset.y,0);
-            var role_offset_x=RoleOffset.x*HUDManager.PIXELS_PER_UNIT;
+            var pos = _rolePos + new Vector3(0, RoleOffset.y, 0);
+            var role_offset = new Vector2( RoleOffset.x ,RoleOffset.z);
             for (int i = 0, nSize = m_SpriteVertex.size; i < nSize; ++i)
             {
                 HUDVertex v = m_SpriteVertex[i];
@@ -120,30 +124,31 @@ namespace GameHUD
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
-                vOffset.x+=role_offset_x;
+                
                 data.mOffset.Add(vOffset);
 
                 vOffset = v.vecRD;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
-                vOffset.x+=role_offset_x;
                 data.mOffset.Add(vOffset);
 
                 vOffset = v.vecLD;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
-                vOffset.x+=role_offset_x;
                 data.mOffset.Add(vOffset);
 
                 vOffset = v.vecLU;
                 vOffset.x *= Scale;
                 vOffset.y *= Scale;
                 vOffset += v.Offset;
-                vOffset.x+=role_offset_x;
                 data.mOffset.Add(vOffset);
 
+                data.mRole_XZ_Offset.Add(role_offset);
+                data.mRole_XZ_Offset.Add(role_offset);
+                data.mRole_XZ_Offset.Add(role_offset);
+                data.mRole_XZ_Offset.Add(role_offset);
                 data.mUvs.Add(v.uvRU);
                 data.mUvs.Add(v.uvRD);
                 data.mUvs.Add(v.uvLD);

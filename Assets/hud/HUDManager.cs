@@ -105,6 +105,7 @@ namespace GameHUD
                     Vector3[] vers = meshdata.mVerts.buffer;
                     Vector2[] uv1s = meshdata.mUvs.buffer;
                     Vector2[] offs = meshdata.mOffset.buffer;
+                    Vector2[] roleoffs = meshdata.mRole_XZ_Offset.buffer;
                     Color32[] cols = meshdata.mCols.buffer;
                     for (int k = meshdata.mVerts.size; k < total; ++k)
                     {
@@ -112,6 +113,7 @@ namespace GameHUD
                         uv1s[k] = uv1s[nLast];
                         offs[k] = offs[nLast];
                         cols[k] = cols[nLast];
+                        roleoffs[k]=roleoffs[nLast];
                     }
                     meshdata.mVerts.size = total;
                     meshdata.mUvs.size = total;
@@ -145,6 +147,7 @@ namespace GameHUD
                 meshdata.mMesh.vertices = meshdata.mVerts.buffer;
                 meshdata.mMesh.uv = meshdata.mUvs.buffer;
                 meshdata.mMesh.uv2 = meshdata.mOffset.buffer;
+                meshdata.mMesh.uv3 = meshdata.mRole_XZ_Offset.buffer;
                 meshdata.mMesh.colors32 = meshdata.mCols.buffer;
                 meshdata.mMesh.triangles = meshdata.mIndices.buffer;
                 _cmdbuff.DrawMesh(meshdata.mMesh, Matrix4x4.identity, meshdata.mMat);

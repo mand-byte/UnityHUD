@@ -9,7 +9,7 @@ namespace GameHUD
         [Tooltip("role")]
         public Transform temp;
         private Transform role;
-        public Vector2 offset = new Vector2(0, 1);
+        public Vector3 offset = new Vector3(0, 1,0);
         HUDInfo hud;
         string _name, _title, _guide, _icon, _chat_content;
         ushort _name_index, _title_index, _guild_index, _icon_index, _chat_index, _blood_index;

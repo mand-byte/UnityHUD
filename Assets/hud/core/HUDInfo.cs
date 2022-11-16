@@ -16,7 +16,7 @@ namespace GameHUD
 
         }
         public bool IsInited=>init;
-        public void Init(Transform trans, Vector2 offset)
+        public void Init(Transform trans, Vector3 offset)
         {
             if (!init)
             {
