@@ -191,7 +191,7 @@ namespace GameHUD
 
         public void PushNumber(int number, int type, Vector3 offset)
         {
-            if (config.NumberTypes.Count <= type)
+            if (type>=config.NumberTypes.Count||type<0)
             {
                 return;
             }
