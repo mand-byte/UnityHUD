@@ -189,15 +189,15 @@ namespace GameHUD
             text_mesh.PushText(str, color, colorOutline, RolePos, _role_offset, uiOffset, outlineWidth, fontSize, CharGap, LineGap, style, Align, 0);
         }
 
-        public void PushNumber(int number, int type, Vector2 offset)
+        public void PushNumber(int number, int type, Vector3 offset)
         {
             if (config.NumberTypes.Count <= type)
             {
                 return;
             }
             var number_mesh = ObjectPool<HUDNumberMesh>.Pop();
-            var start_pos = HUDManager.CameraTrans.right * offset.x + HUDManager.CameraTrans.up * offset.y + _trans.position;
-            number_mesh.PushNumber(number, type, start_pos, offset);
+            var start_pos = HUDManager.CameraTrans.right * offset.x + HUDManager.CameraTrans.up * offset.y + _trans.position+HUDManager.CameraTrans.forward*offset.z;
+            number_mesh.PushNumber(number, type, start_pos);
             _dynamical_mesh.Add(number_mesh);
         }
         public void PushTalk(int idx, string content)

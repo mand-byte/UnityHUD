@@ -268,7 +268,7 @@ namespace GameHUD
                         {
                             var r = new Unity.Mathematics.Random((uint)System.Guid.NewGuid().GetHashCode());
                             var x = r.NextFloat(-3f, 3f);
-                            var pos = new Vector2(x, 0);
+                            var pos = new Vector3(x, 0,r.NextFloat(-3f,3f));
                             hud?.HurtNumber(_number_type, _hurt_number, pos);
                         }
 

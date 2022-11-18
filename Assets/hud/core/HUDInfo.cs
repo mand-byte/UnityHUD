@@ -65,7 +65,7 @@ namespace GameHUD
         ///</summary>
         ///<param name="styleIndex">飘字样式索引</param>
         ///<param name="offset">偏移值</param>
-        public void HurtNumber(int styleIndex, int number, Vector2 offset)
+        public void HurtNumber(int styleIndex, int number, Vector3 offset)
         {
             if (!init) return;
             Object.PushNumber(number, styleIndex, offset);

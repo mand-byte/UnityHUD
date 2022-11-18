@@ -35,7 +35,7 @@ namespace GameHUD
         HUDNumberConfig numconfig;
         AnimationCurve cCurve, sCurve, pCurve;
         float _cur_time;
-        public void PushNumber(int number, int type, Vector3 rolePos, Vector2 uioffset)
+        public void PushNumber(int number, int type, Vector3 rolePos)
         {
             _valid = true;
             _FollowRole = false;
